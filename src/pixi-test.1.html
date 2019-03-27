@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>pixi demo</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html,
+        body {
+            background: #d5d5d5;
+        }
+
+        .canvas-box {
+            width: 650px;
+            height: 490px;
+            margin: 100px auto 0;
+        }
+
+        canvas {}
+
+        .btn-box {
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .btn {
+            width: 120px;
+            height: 40px;
+        }
+
+        .btn.disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="canvas-box" id="canvas-box"></div>
+
+    <div class="btn-box">
+        <button class="btn" data-index="0" data-name="face0.png">有趣-face0</button>
+        <button class="btn" data-index="1" data-name="face1.png">微笑-face1</button>
+        <button class="btn" data-index="2" data-name="face2.png">狂笑-face2</button>
+    </div>
+
+    <script src="https://nie.res.netease.com/comm/js/jquery(mixNIE).1.11.js"></script>
+    <!-- <script src="https://nie.res.netease.com/comm/js/zepto(mixNIE).last.js"></script> -->
+    <script src="pixi.min.js"></script>
+    <script src="tink.release.js"></script>
+    <script>
+        // const datas = ['assets/face0.png', 'assets/face1.png', 'assets/face2.png'];
+        const datas = [{
+            url: 'assets/face0.png',
+            crossOrigin: true
+        }, {
+            url: 'assets/face1.png',
+            crossOrigin: true
+        }, {
+            url: 'assets/face2.png',
+            crossOrigin: true
+        }];
+    </script>
+    <script>
+        let Application = PIXI.Application,
+            loader = PIXI.loader,
+            resources = PIXI.loader.resources,
+            Sprite = PIXI.Sprite;
+
+        //test PIXI
+        let type = "WebGL"
+        if (!PIXI.utils.isWebGLSupported()) {
+            type = "canvas"
+        }
+        PIXI.utils.sayHello(type)
+
+        //创建画布
+        let app = new Application({
+            width: 650,
+            height: 490
+        });
+
+        // console.log(app.renderer.width)
+        // console.log(app.renderer.height)
+
+        //画布添加到页面
+        document.getElementById('canvas-box').appendChild(app.view);
+        app.renderer.backgroundColor = 0xffffff;
+        let t = new Tink(PIXI, app.view);
+        let pointer;
+        console.log(t)
+
+        // PIXI.loader
+        //     .add(datas)
+        //     .on('progress', loadPorgressHancler)
+        //     .load(setup);
+
+        PIXI.loader
+            .add('assets/sprite.json')
+            .on('progress', loadPorgressHancler)
+            .load(setup);
+
+        //加载进度
+        function loadPorgressHancler(loader, resource) {
+            console.log("loading -- " + loader.progress.toFixed(0) + '%');
+        }
+
+        //加载完成
+        let scene1, face0, face1, face2;
+        let circle;
+
+        //物件数组，用来存放精力
+        let spriteList = [];
+        let curSprite = null;
+
+        function setup() {
+            //定时循环
+            app.ticker.add(delta => gameLoop(delta));
+            //-------------普通方式-------------
+            // // console.log('load complete')
+            // // 创建精灵
+            // let face0 = new Sprite(
+            //     resources[datas[0].url].texture
+            // );
+
+            // //从舞台移除精灵
+            // // app.stage.removeChild(face0)
+            // //or
+            // //anySprite.visible = false;
+
+            // //精灵坐标
+            // face0.x = 200;
+            // face0.y = 200;
+            // //or
+            // // face0.position.set(200, 200);
+
+            // //缩放
+            // // face0.scale.set(0.5, 0.5);
+
+            // //旋转角度
+            // face0.rotation = Math.PI / 4; //90deg
+
+            // //设置变形中心
+            // // face0.anchor.x = 0.5;
+            // // face0.anchor.y = 0.5;
+            // face0.anchor.set(0.5, 0.5);
+
+
+            // //精灵添加到舞台
+            // app.stage.addChild(face0);
+            //-------------普通方式-------------
+
+
+            //-------------纹理贴图方式-------------
+            scene1 = PIXI.loader.resources["assets/sprite.json"].textures;
+            // face0 = new Sprite(scene1["face0.png"]);
+            // face1 = new Sprite(scene1["face1.png"]);
+            // face2 = new Sprite(scene1["face2.png"]);
+
+            // face1.position.set(200, 0);
+            // face2.position.set(400, 0);
+
+            // face0.x = 150;
+            // face0.y = 150;
+            // face0.anchor.set(.5, .5);
+
+            // app.stage.addChild(face0);
+            // app.stage.addChild(face0, face1, face2);
+            //-------------纹理贴图方式-------------
+
+            // t.makeDraggable(face0);
+
+            //canvas内事件
+            touchEvent();
+            //外部按钮事件
+            btnEvent();
+        }
+
+        function gameLoop() {
+            // face0.rotation += Math.PI / 90
+            t.update();
+        }
+
+        function touchEvent() {
+            pointer = t.makePointer();
+
+            //press事件
+            pointer.press = () => {
+                // console.log("The pointer was pressed");
+                // console.log(pointer.x)
+                // console.log(pointer.y)
+                // console.log(pointer)
+
+                // console.log(pointer.hitTestSprite(face0));
+                let isHitSprite = false;
+                for (let i = spriteList.length - 1; i >= 0; i--) {
+                    if (pointer.hitTestSprite(spriteList[i])) {
+                        let _cur = spriteList[i]
+                        // console.log(_cur._texture.textureCacheIds)
+                        isHitSprite = true;
+                        spriteList.splice(i, 1)
+                        spriteList.push(_cur)
+                        curSprite = _cur
+                        break;
+                    }
+                }
+                // console.log(_cur._texture.textureCacheIds)
+                console.log('isHitSprite : ' + isHitSprite + ', And hit target is ' + '[' + curSprite._texture
+                    .textureCacheIds + ']')
+            };
+        }
+
+        function btnEvent() {
+            $('.btn').on('click', function () {
+                let $this = $(this),
+                    _name = $this.data('name')
+
+                if ($this.hasClass('disabled')) return;
+
+                $this.addClass('disabled');
+
+                //添加内容到画布
+                console.log(_name)
+                let _sprite = new Sprite(scene1[_name]);
+
+                _sprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
+                _sprite.anchor.set(.5, .5);
+
+                //添加到舞台
+                app.stage.addChild(_sprite);
+                //添加拖放事件
+                t.makeDraggable(_sprite);
+                //给精灵添加交互绑定
+                t.makeInteractive(_sprite);
+                //存储到精灵数组
+                spriteList.push(_sprite);
+
+                //精灵点击事件
+                _sprite.press = () => {
+                    //Do something when the pointer presses the sprite
+                    // console.log('you press me! And my name is [' + _sprite._texture.textureCacheIds[0] +
+                    //     ']')
+                };
+
+                curSprite = _sprite;
+            })
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>pixi demo</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html,
+        body {
+            background: #d5d5d5;
+        }
+
+        .canvas-box {
+            width: 650px;
+            height: 490px;
+            margin: 100px auto 0;
+        }
+
+        canvas {}
+
+        .btn-box {
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .btn {
+            width: 120px;
+            height: 40px;
+        }
+
+        .btn.disabled {
+            cursor: not-allowed;
+            opacity: .5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="canvas-box" id="canvas-box"></div>
+
+    <div class="btn-box">
+        <button class="btn" data-index="0" data-name="face0.png">有趣-face0</button>
+        <button class="btn" data-index="1" data-name="face1.png">微笑-face1</button>
+        <button class="btn" data-index="2" data-name="face2.png">狂笑-face2</button>
+    </div>
+
+    <script src="https://nie.res.netease.com/comm/js/jquery(mixNIE).1.11.js"></script>
+    <!-- <script src="https://nie.res.netease.com/comm/js/zepto(mixNIE).last.js"></script> -->
+    <script src="pixi.min.js"></script>
+    <script src="tink.js"></script>
+    <script>
+        // const datas = ['assets/face0.png', 'assets/face1.png', 'assets/face2.png'];
+        const datas = [{
+            url: 'assets/face0.png',
+            crossOrigin: true
+        }, {
+            url: 'assets/face1.png',
+            crossOrigin: true
+        }, {
+            url: 'assets/face2.png',
+            crossOrigin: true
+        }];
+    </script>
+    <script>
+        let Application = PIXI.Application,
+            loader = PIXI.loader,
+            resources = PIXI.loader.resources,
+            Sprite = PIXI.Sprite;
+
+        //test PIXI
+        let type = "WebGL"
+        if (!PIXI.utils.isWebGLSupported()) {
+            type = "canvas"
+        }
+        PIXI.utils.sayHello(type)
+
+        //创建画布
+        let app = new Application({
+            width: 650,
+            height: 490
+        });
+
+        // console.log(app.renderer.width)
+        // console.log(app.renderer.height)
+
+        //画布添加到页面
+        document.getElementById('canvas-box').appendChild(app.view);
+        app.renderer.backgroundColor = 0x42496b;
+        let t = new Tink(PIXI, app.view);
+        let pointer;
+        // console.log(t)
+
+        PIXI.loader
+            .add('assets/sprite.json')
+            .on('progress', loadPorgressHancler)
+            .load(setup);
+
+        //加载进度
+        function loadPorgressHancler(loader, resource) {
+            console.log("loading -- " + loader.progress.toFixed(0) + '%');
+        }
+
+        //加载完成
+        let scene1, face0, face1, face2;
+        let circle;
+
+        //物件数组，用来存放精力
+        let spriteList = [];
+        let curSprite = null;
+
+        let dragCtr, delCtr;
+        let isHitSprite = false;
+        let isHitDrag = false;
+        let isHitDel = false;
+
+        function setup() {
+            //定时循环
+            app.ticker.add(delta => gameLoop(delta));
+
+            //-------------纹理贴图方式-------------
+            scene1 = PIXI.loader.resources["assets/sprite.json"].textures;
+            // face0 = new Sprite(scene1["face0.png"]);
+            // face0.position.set(200, 0);
+            // face0.x = 150;
+            // face0.y = 150;
+            // face0.anchor.set(.5, .5);
+
+            // app.stage.addChild(face0);
+            //-------------纹理贴图方式-------------
+
+            //创建控件并隐藏
+            dragCtr = new Sprite(scene1['icon-drag.png'])
+            delCtr = new Sprite(scene1['icon-del.png'])
+
+            dragCtr.anchor.set(.5, .5);
+            delCtr.anchor.set(.5, .5);
+
+            dragCtr.visible = false;
+            delCtr.visible = false;
+
+            //添加控件到舞台
+            app.stage.addChild(dragCtr, delCtr)
+            //给精灵添加交互绑定-让精灵可以像button一样有点击事件绑定
+            // t.makeInteractive(dragCtr);
+            // t.makeInteractive(delCtr);
+
+            //给精灵点击事件
+            // dragCtr.press = () => {
+            //     console.log('你点到缩放控件啦！')
+            // };
+            // delCtr.press = () => {
+            //     console.log('你点到删除控件啦！')
+            // };
+
+            //canvas内事件
+            touchEvent();
+            //外部按钮事件
+            btnEvent();
+        }
+
+        function gameLoop(deleta) {
+            // console.log(deleta)
+            t.update();
+
+            //触摸舞台时，且触碰到精灵时，更新控件坐标
+            if (pointer.isDown && isHitSprite && !isHitDrag && !isHitDel) {
+                console.log('你碰到我啦！我叫 [' + curSprite._texture.textureCacheIds + ']')
+                updateCtr(curSprite);
+            }
+        }
+
+        function touchEvent() {
+            pointer = t.makePointer();
+
+            //press事件
+            pointer.press = () => {
+                // console.log("The pointer was pressed");
+                // console.log(pointer.x)
+                // console.log(pointer.y)
+                // console.log(pointer)
+
+                //避免拖拽事件把精灵层级提上来，默认先禁止拖拽
+                for (let i = 0; i < spriteList.length; i++) {
+                    spriteList[i].draggable = false;
+                }
+
+                //先检测是否触摸到控件
+                if (pointer.hitTestSprite(dragCtr)) {
+                    //点击了【缩放】控件
+                    isHitDrag = true;
+                    console.log('你点到缩放控件啦！缩放了 [' + curSprite._texture.textureCacheIds + ']')
+                } else if (pointer.hitTestSprite(delCtr)) {
+                    //点击了【删除】控件
+                    isHitDel = true;
+                    console.log('你点到删除控件啦！删除了 [' + curSprite._texture.textureCacheIds + ']')
+                    //删除当前精灵，并隐藏控件
+                    // t.makeUndraggable(curSprite);
+                    spriteList.splice(spriteList.indexOf(curSprite), 1);
+                    app.stage.removeChild(curSprite);
+                    t.makeUndraggable(curSprite);
+                    showCtr(false);
+                    updateBtn();
+                    // console.log(app.stage.children)
+                } else {
+                    // console.log(pointer.hitTestSprite(face0));
+                    isHitSprite = false;
+                    for (let i = spriteList.length - 1; i >= 0; i--) {
+                        // console.log()
+                        if (pointer.hitTestSprite(spriteList[i])) {
+                            let _cur = spriteList[i]
+                            _cur.draggable = true;
+                            // console.log(_cur._texture.textureCacheIds)
+                            isHitSprite = true;
+                            spriteList.splice(i, 1)
+                            spriteList.push(_cur)
+                            curSprite = _cur
+                            break;
+                        }
+                    }
+                    if (isHitSprite) {
+                        console.log('isHitSprite : ' + isHitSprite + ', 选中 ' + '[' + curSprite._texture
+                            .textureCacheIds + ']')
+                    } else {
+                        //没有点中任何东西
+                        console.log('未选中任何物件')
+                        curSprite = null;
+                    }
+                    showCtr(isHitSprite);
+                }
+
+            };
+
+            pointer.release = () => {
+                isHitDrag = false;
+                isHitDel = false;
+                for (let i = 0; i < spriteList.length; i++) {
+                    spriteList[i].draggable = false;
+                }
+            }
+        }
+
+        //物件按钮事件
+        function btnEvent() {
+            $('.btn').on('click', function () {
+                let $this = $(this),
+                    _name = $this.data('name')
+
+                //限制只能添加一次
+                if ($this.hasClass('disabled')) return;
+                $this.addClass('disabled');
+
+                //创建和添加精灵
+                add(_name)
+            })
+        }
+
+        function add(name) {
+            //添加内容到画布
+            console.log('[' + name + '] 添加到画布')
+            //创建精灵
+            let _sprite = new Sprite(scene1[name]);
+
+            _sprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
+            _sprite.anchor.set(.5, .5);
+
+            //存储到精灵数组
+            spriteList.push(_sprite);
+            //添加到舞台
+            app.stage.addChild(_sprite);
+            //给精灵绑定拖放交互
+            t.makeDraggable(_sprite);
+            //给精灵添加交互绑定-让精灵可以像button一样有点击事件绑定
+            // t.makeInteractive(_sprite);
+
+            //给精灵点击事件
+            // _sprite.press = () => {
+            //     //Do something when the pointer presses the sprite
+            //     // console.log('you press me! And my name is [' + _sprite._texture.textureCacheIds[0] +
+            //     //     ']')
+            // };
+
+            curSprite = _sprite;
+
+            //显示控件
+            showCtr(true);
+            //更新控件坐标
+            updateCtr(_sprite);
+        }
+
+        //控件显示状态
+        function showCtr(boolean) {
+            dragCtr.visible = boolean;
+            delCtr.visible = boolean;
+
+            //同时更新控件在舞台的层级
+            updateStage(dragCtr);
+            updateStage(delCtr);
+        }
+
+        function updateCtr(sprite) {
+            let s_width = sprite.width,
+                s_height = sprite.height,
+                s_x = sprite.x, //精灵中心坐标
+                s_y = sprite.y //精灵中心坐标
+
+            dragCtr.x = s_x + s_width / 2 + dragCtr.width / 2;
+            dragCtr.y = s_y - s_height / 2 - dragCtr.height / 2;
+            delCtr.x = s_x - s_width / 2 - delCtr.width / 2;
+            delCtr.y = s_y + s_height / 2 + delCtr.height / 2;
+        }
+
+        //更新精灵层级
+        function updateStage(sprite) {
+            let children = app.stage.children;
+            children.splice(children.indexOf(sprite), 1);
+            children.push(sprite);
+        }
+
+        //更新物件按钮显示
+        function updateBtn() {
+            let children = app.stage.children,
+                $btn = $(".btn")
+
+            $btn.removeClass('disabled')
+            $btn.each(function () {
+                let $this = $(this)
+                let _name = $this.data('name')
+                for (let i = 0; i < children.length; i++) {
+                    if (_name == children[i]._texture.textureCacheIds[0]) {
+                        $this.addClass('disabled')
+                    }
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
