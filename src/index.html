@@ -5,104 +5,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>DSR demo</title>
     <style>
         * {
             padding: 0;
             margin: 0;
         }
 
-        #canvas-box {
+        html,
+        body {
+            background: #d5d5d5;
+        }
+
+        .canvas-box {
             width: 650px;
             height: 490px;
-            border: 1px solid #000;
-            float: left;
-            margin: 20px;
+            margin: 100px auto 0;
         }
 
         canvas {}
 
         .btn-box {
-            float: left;
-            width: 100px;
-            height: 480px;
-            margin: 20px;
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
         }
 
         .btn {
-            width: 100%;
+            width: 120px;
             height: 40px;
-            line-height: 40px;
-            margin-bottom: 10px;
         }
 
         .btn.disabled {
-            opacity: 0.5;
+            cursor: not-allowed;
+            opacity: .5;
         }
     </style>
 </head>
 
 <body>
-    <div id="canvas-box">
-        <canvas id="canvas" width="650" height="490"></canvas>
-    </div>
+    <!-- canvas父容器 -->
+    <div class="canvas-box" id="canvas-box"></div>
 
     <div class="btn-box">
-        <button class="btn" data-index="0">有趣</button>
-        <button class="btn" data-index="1">微笑</button>
-        <button class="btn" data-index="2">狂笑</button>
+        <button class="btn" data-name="face0.png">有趣-face0</button>
+        <button class="btn" data-name="face1.png">微笑-face1</button>
+        <button class="btn" data-name="face2.png">狂笑-face2</button>
     </div>
 
     <script src="https://nie.res.netease.com/comm/js/jquery(mixNIE).1.11.js"></script>
     <!-- <script src="https://nie.res.netease.com/comm/js/zepto(mixNIE).last.js"></script> -->
     <script src="pixi.min.js"></script>
+    <script src="tink.js"></script>
     <script src="dsr.js"></script>
     <script>
-        //test PIXI
-        let type = "WebGL"
-        if (!PIXI.utils.isWebGLSupported()) {
-            type = "canvas"
-        }
-        PIXI.utils.sayHello(type)
-
-        //创建画布
-        let app = new PIXI.Application({
-            width: 256,
-            height: 256
+        //实例化dsr
+        let _dsr = new DSR({
+            id: "#canvas-box", //canvas父容器id，用于插入canvas画布【必传】
+            btns: ".btn", //按钮className【必传】
+            width: 650, //canvas width【必传】
+            height: 490, //canvas height【必传】
+            resources: [__uri('assets/sprite.json')],//图片资源【必传】
+            bgColor: '#42496b', //画布背景色，选传，默认白色#fff【选传】
+            onInit: function() { //【选传】
+                //初始化完成回调
+                console.log('init complete!')
+            },
+            onLoad: function(loader, resource) {
+                console.log("loading -- " + loader.progress.toFixed(0) + '%');
+            },
+            onLoaded: function() {
+                console.log('resource loaded!')
+            }
         });
 
-        //画布添加到页面
-        document.body.appendChild(app.view);
-        // app.renderer.backgroundColor = 0x061639;
-    </script>
-    <script>
-        $(function () {
-            const datas = [{
-                    src: __uri('assets/face0.png')
-                },
-                {
-                    src: __uri('assets/face1.png')
-                },
-                {
-                    src: __uri('assets/face2.png')
-                }
-            ]
-            const _DSR = new DSR({});
-            const btns = $(".btn")
-
-            btns.on('click', function () {
-                let $this = $(this),
-                    _index = $this.data('index')
-
-                if ($this.hasClass('disabled')) return;
-                $this.addClass('disabled')
-                // console.log(datas[_index])
-
-                //添加
-                _DSR.add(datas[_index])
-            })
-
-        })
+        console.log(_dsr)
     </script>
 </body>
 
