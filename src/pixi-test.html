@@ -110,7 +110,6 @@
 
         //加载完成
         let scene1, face0, face1, face2;
-        let circle;
 
         //物件数组，用来存放精力
         let spriteList = [];
@@ -120,6 +119,8 @@
         let isHitSprite = false;
         let isHitDrag = false;
         let isHitDel = false;
+
+        let baseDistance = null;
 
         function setup() {
             //定时循环
@@ -175,6 +176,21 @@
                 console.log('你碰到我啦！我叫 [' + curSprite._texture.textureCacheIds + ']')
                 updateCtr(curSprite);
             }
+
+            //选中拖放
+            if (isHitDrag && baseDistance != null) {
+                let curDistance = calcDistance([curSprite.x, curSprite.y], [pointer.x, pointer.y]);
+                let _scale = curDistance / baseDistance;
+                curSprite.scale.set(_scale, _scale);
+                updateCtr(curSprite);
+            }
+        }
+
+        function calcDistance(pointA, pointB) {
+            let [x1, y1] = pointA;
+            let [x2, y2] = pointB;
+
+            return Math.ceil(Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)))
         }
 
         function touchEvent() {
@@ -197,6 +213,13 @@
                     //点击了【缩放】控件
                     isHitDrag = true;
                     console.log('你点到缩放控件啦！缩放了 [' + curSprite._texture.textureCacheIds + ']')
+
+                    let difX = pointer.x - (dragCtr.x - dragCtr.width / 2);
+                    let difY = (dragCtr.y + dragCtr.height / 2) - pointer.y;
+                    baseDistance = calcDistance([curSprite.x, curSprite.y],
+                        [curSprite.x + (curSprite.width / curSprite.scale.x / 2) + difX,
+                            curSprite.y - (curSprite.height / curSprite.scale.x / 2) - difY
+                        ])
                 } else if (pointer.hitTestSprite(delCtr)) {
                     //点击了【删除】控件
                     isHitDel = true;
@@ -241,6 +264,7 @@
             pointer.release = () => {
                 isHitDrag = false;
                 isHitDel = false;
+                // baseDistance = null;
                 for (let i = 0; i < spriteList.length; i++) {
                     spriteList[i].draggable = false;
                 }
