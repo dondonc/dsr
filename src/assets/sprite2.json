@@ -1,0 +1,63 @@
+{"frames": {
+
+"ground-min.png":
+{
+	"frame": {"x":0,"y":0,"w":1000,"h":642},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1000,"h":642},
+	"sourceSize": {"w":1000,"h":642}
+},
+"icon-del.png":
+{
+	"frame": {"x":0,"y":652,"w":35,"h":33},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":33},
+	"sourceSize": {"w":35,"h":33}
+},
+"icon-drag.png":
+{
+	"frame": {"x":45,"y":652,"w":35,"h":34},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":34},
+	"sourceSize": {"w":35,"h":34}
+},
+"iu0.png":
+{
+	"frame": {"x":90,"y":652,"w":200,"h":162},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":162},
+	"sourceSize": {"w":200,"h":162}
+},
+"iu1.jpg":
+{
+	"frame": {"x":300,"y":652,"w":221,"h":250},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":221,"h":250},
+	"sourceSize": {"w":221,"h":250}
+},
+"moba.png":
+{
+	"frame": {"x":531,"y":652,"w":100,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+	"sourceSize": {"w":100,"h":100}
+}},
+"animations": {
+	"iu": ["iu0.png","iu1.jpg"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "sprite2.png",
+	"format": "RGBA8888",
+	"size": {"w":1000,"h":902},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e40bb58c5b9f33515d94c14529b81bf2:4104132a0b4974907d98366e865a195f:66aaffcd701bd28f82c283e8c5bc56bb$"
+}
+}

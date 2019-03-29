@@ -20,7 +20,7 @@
         .canvas-box {
             width: 650px;
             height: 490px;
-            margin: 100px auto 0;
+            margin: 40px auto 0;
         }
 
         canvas {}
@@ -28,7 +28,7 @@
         .btn-box {
             width: 100%;
             text-align: center;
-            margin-top: 50px;
+            margin-top: 30px;
         }
 
         .btn {
@@ -40,17 +40,43 @@
             cursor: not-allowed;
             opacity: .5;
         }
+
+        .sub-title {
+            line-height: 50px;
+        }
+
+        .theme-btn {
+            width: 120px;
+            height: 40px;
+        }
+
+        .theme-btn.act {
+            color: red;
+        }
     </style>
 </head>
 
 <body>
+    <div class="btn-box">
+        <p class="sub-title">主题按钮</p>
+        <button class="theme-btn act" data-theme="0">流星系列</button>
+        <button class="theme-btn" data-theme="1">浓情系列</button>
+    </div>
+
     <!-- canvas父容器 -->
     <div class="canvas-box" id="canvas-box"></div>
 
     <div class="btn-box">
+        <p class="sub-title">流星系列-物件按钮</p>
         <button class="btn" data-name="face0.png">有趣-face0</button>
         <button class="btn" data-name="face1.png">微笑-face1</button>
         <button class="btn" data-name="face2.png">狂笑-face2</button>
+    </div>
+    <div class="btn-box">
+        <p class="sub-title">浓情系列-物件按钮</p>
+        <button class="btn" data-name="iu0.png">声哥1-iu0</button>
+        <button class="btn" data-name="iu1.jpg">声哥2-iu1</button>
+        <button class="btn" data-name="moba.png">平安京-moba</button>
     </div>
 
     <script src="https://nie.res.netease.com/comm/js/jquery(mixNIE).1.11.js"></script>
@@ -59,22 +85,27 @@
     <script src="tink.js"></script>
     <script src="dsr.js"></script>
     <script>
+        let theme_resources = [
+            __uri('assets/sprite.json'),
+            __uri('assets/sprite2.json')
+        ]
+
         //实例化dsr
         let _dsr = new DSR({
             id: "#canvas-box", //canvas父容器id，用于插入canvas画布【必传】
             btns: ".btn", //按钮className【必传】
             width: 650, //canvas width【必传】
             height: 490, //canvas height【必传】
-            resources: [__uri('assets/sprite.json')],//图片资源【必传】
+            resources: theme_resources, //图片资源【必传】
             bgColor: '#42496b', //画布背景色，选传，默认白色#fff【选传】
-            onInit: function() { //【选传】
+            onInit: function () { //【选传】
                 //初始化完成回调
                 console.log('init complete!')
             },
-            onLoad: function(loader, resource) {
+            onLoad: function (loader, resource) {
                 console.log("loading -- " + loader.progress.toFixed(0) + '%');
             },
-            onLoaded: function() {
+            onLoaded: function () {
                 console.log('resource loaded!')
             }
         });

@@ -131,6 +131,8 @@ class DSR {
         }
     }
 
+    // change
+
     //舞台事件
     tinkEvent() {
         let self = this,
@@ -149,7 +151,7 @@ class DSR {
             }
 
             //先检测是否触摸到控件
-            if (self._Pointer.hitTestSprite(dragCtr)) {
+            if (self._Pointer.hitTestSprite(dragCtr) && dragCtr.visible == true) {
                 //点击了【缩放】控件
                 self.isHitDrag = true;
                 console.log('你点到缩放控件啦！缩放了 [' + self.curSprite._texture.textureCacheIds + ']')
@@ -159,7 +161,7 @@ class DSR {
                 self.baseDistance = self.calcDistance([self.curSprite.x, self.curSprite.y], [self.curSprite.x + (self.curSprite.width / self.curSprite.scale.x / 2) + difX,
                     self.curSprite.y - (self.curSprite.height / self.curSprite.scale.x / 2) - difY
                 ])
-            } else if (self._Pointer.hitTestSprite(delCtr)) {
+            } else if (self._Pointer.hitTestSprite(delCtr) && delCtr.visible == true) {
                 //点击了【删除】控件
                 self.isHitDel = true;
                 console.log('你点到删除控件啦！删除了 [' + self.curSprite._texture.textureCacheIds + ']')
@@ -199,6 +201,7 @@ class DSR {
 
         };
 
+        //触碰释放
         self._Pointer.release = () => {
             this.isHitDrag = false;
             this.isHitDel = false;
@@ -214,6 +217,7 @@ class DSR {
         let self = this,
             _setting = this.setting;
 
+        //物件按钮事件
         $(_setting.btns).on('click', function () {
             let $this = $(this),
                 _name = $this.data('name')
@@ -222,7 +226,7 @@ class DSR {
             if ($this.hasClass('disabled')) return;
             $this.addClass('disabled');
 
-            //创建和添加精灵
+            //创建和添加物件精灵
             self.add(_name);
         })
     }
