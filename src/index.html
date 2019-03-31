@@ -53,6 +53,14 @@
         .theme-btn.act {
             color: red;
         }
+
+        .btn-clean {
+            position: fixed;
+            width: 120px;
+            height: 40px;
+            top: 160px;
+            right: 50px;
+        }
     </style>
 </head>
 
@@ -79,6 +87,8 @@
         <button class="btn" data-name="moba.png">平安京-moba</button>
     </div>
 
+    <!-- <button class="btn-clean">清空</button> -->
+
     <script src="https://nie.res.netease.com/comm/js/jquery(mixNIE).1.11.js"></script>
     <!-- <script src="https://nie.res.netease.com/comm/js/zepto(mixNIE).last.js"></script> -->
     <script src="pixi.min.js"></script>
@@ -88,7 +98,7 @@
         let theme_resources = [
             __uri('assets/sprite.json'),
             __uri('assets/sprite2.json')
-        ]
+        ];
 
         //实例化dsr
         let _dsr = new DSR({
@@ -100,17 +110,35 @@
             bgColor: '#42496b', //画布背景色，选传，默认白色#fff【选传】
             onInit: function () { //【选传】
                 //初始化完成回调
-                console.log('init complete!')
+                console.log('init complete!');
             },
             onLoad: function (loader, resource) {
                 console.log("loading -- " + loader.progress.toFixed(0) + '%');
             },
             onLoaded: function () {
-                console.log('resource loaded!')
+                console.log('resource loaded!');
+            },
+            onResize: function() {
+                console.log('resize!');
             }
         });
 
-        console.log(_dsr)
+        //切换主题
+        $(".theme-btn").on('click', function() {
+            let _i = $(this).data('theme');
+
+            // _dsr._App.renderer.backgroundColor = 0x42496b;
+            $(this).addClass('act').siblings().removeClass('act');
+            //切换主题
+            _dsr.change(theme_resources[_i]);
+        })
+
+        //清空当前画面内容
+        // $(".btn-clean").on('click', function() {
+        //     _dsr.clean();
+        // })
+
+        console.log(_dsr);
     </script>
 </body>
 

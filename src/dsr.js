@@ -22,20 +22,31 @@ class DSR {
             bgColor: 0xffffff
         };
 
+        this.msgStyle = new PIXI.TextStyle({
+            fontFamily: "Arial",
+            fontSize: 26
+        });
+
         //合并参数
         this.opt = opt;
         this.setting = $.extend(baseSetting, opt);
 
         //内部变量
+        this.resource = opt.resources[0]
         this.scene = null;
         this.spriteList = [];
         this.curSprite = null;
+        this.ground = null;
         this.dragCtr = null;
         this.delCtr = null;
         this.isHitSprite = false;
         this.isHitDrag = false;
         this.isHitDel = false;
         this.baseDistance = null;
+        this.cache = [];
+
+        this._cx = opt.width / 2
+        this._cy = opt.height / 2
 
         //say hello
         let type = PIXI.utils.isWebGLSupported() ? "WebGL" : "canvas";
@@ -66,6 +77,11 @@ class DSR {
         //初始化Tink.js
         this._Tink = new Tink(PIXI, this._App.view);
 
+        self.message = new PIXI.Text("Loading...", self.msgStyle);
+        self.message.position.set(self._cx, self._cy);
+        self.message.anchor.set(.5, .5);
+        this._App.stage.addChild(self.message);
+
         //开始加载
         this.load();
 
@@ -78,7 +94,7 @@ class DSR {
             _setting = this.setting;
 
         PIXI.loader
-            .add(_setting.resources[0])
+            .add(self.resource)
             .on('progress', _setting.onLoad)
             .load(setup.bind(this));
 
@@ -86,21 +102,8 @@ class DSR {
             //定时循环
             this._App.ticker.add(delta => gameLoop(delta));
 
-            //加载纹理资源
-            this.scene = PIXI.loader.resources[_setting.resources[0]].textures;
-
-            //创建控件并隐藏
-            this.dragCtr = new Sprite(self.scene['icon-drag.png']);
-            this.delCtr = new Sprite(self.scene['icon-del.png']);
-
-            this.dragCtr.anchor.set(.5, .5);
-            this.delCtr.anchor.set(.5, .5);
-
-            this.dragCtr.visible = false;
-            this.delCtr.visible = false;
-
-            //添加控件到舞台
-            this._App.stage.addChild(this.dragCtr, this.delCtr);
+            //初始化舞台
+            self.initStage();
 
             //加载完成事件回调
             _setting.onLoaded && _setting.onLoaded();
@@ -108,6 +111,9 @@ class DSR {
             //添加舞台和按钮事件
             this.tinkEvent();
             this.btnEvent();
+
+            //记录缓存
+            this.cache.push(self.resource);
         }
 
         function gameLoop() {
@@ -131,7 +137,107 @@ class DSR {
         }
     }
 
-    // change
+    initStage() {
+        let self = this;
+        //加载纹理资源
+        this.scene = PIXI.loader.resources[self.resource].textures;
+        console.log(this.scene)
+
+        this.message.visible = false;
+
+        //加载背景图
+        this.ground = new Sprite(self.scene['ground-min.png']);
+        this.ground.anchor.set(.5, .5);
+        this.ground.position.set(self._cx, self._cy);
+        self.autoAdaptation(this.ground);
+
+        //创建控件并隐藏
+        this.dragCtr = new Sprite(self.scene['icon-drag.png']);
+        this.delCtr = new Sprite(self.scene['icon-del.png']);
+
+        this.dragCtr.anchor.set(.5, .5);
+        this.delCtr.anchor.set(.5, .5);
+
+        this.dragCtr.visible = false;
+        this.delCtr.visible = false;
+
+        //添加控件到舞台
+        this._App.stage.addChild(this.dragCtr, this.delCtr, this.ground);
+    }
+
+    autoAdaptation(sprite) {
+        let self = this,
+            ratioApp = self._App.renderer.width / self._App.renderer.height,
+            ratioSprite = sprite.width / sprite.height,
+            ratio = 1;
+
+        if (ratioApp >= ratioSprite) {
+            // 高缩放
+            ratio = self._App.renderer.height / sprite.height;
+        } else {
+            // 宽缩放
+            ratio = self._App.renderer.width / sprite.width;
+        }
+        sprite.scale.set(ratio, ratio);
+
+    }
+
+    change(resource) {
+        let self = this,
+            _setting = this.setting;
+        console.log(resource)
+        self.message.visible = true;
+        self.resource = resource;
+
+        //加载资源
+        if (self.cache.indexOf(resource) < 0) {
+            PIXI.loader
+                .add(self.resource)
+                .load(setup2.bind(this));
+        } else {
+            setup2();
+        }
+
+        function setup2() {
+            //重置当前画布
+            self.resetStage();
+
+            //更新当前画布内容为新场景
+            self.initStage();
+
+            //记录缓存
+            self.cache.push(self.resource);
+        }
+
+    }
+
+    //清空画面内容
+    clean() {
+        for(let i = 0;i<this._App.stage.children.length; i++) {
+            let child = this._App.stage.children[i];
+            console.log(child)
+            // if(child)
+        }
+    }
+
+    //重置当前画布
+    resetStage() {
+        let self = this;
+        //清空当前画布
+        self._App.stage.removeChildren();
+        this.spriteList = [];
+        this.curSprite = null;
+        this.ground = null;
+        this.dragCtr = null;
+        this.delCtr = null;
+        this.isHitSprite = false;
+        this.isHitDrag = false;
+        this.isHitDel = false;
+        this.baseDistance = null;
+
+        //重置按钮样式
+        $(this.setting.btns).removeClass('disabled');
+    }
 
     //舞台事件
     tinkEvent() {
@@ -151,17 +257,17 @@ class DSR {
             }
 
             //先检测是否触摸到控件
-            if (self._Pointer.hitTestSprite(dragCtr) && dragCtr.visible == true) {
+            if (self._Pointer.hitTestSprite(self.dragCtr) && self.dragCtr.visible == true) {
                 //点击了【缩放】控件
                 self.isHitDrag = true;
                 console.log('你点到缩放控件啦！缩放了 [' + self.curSprite._texture.textureCacheIds + ']')
 
-                let difX = self._Pointer.x - (dragCtr.x - dragCtr.width / 2);
-                let difY = (dragCtr.y + dragCtr.height / 2) - self._Pointer.y;
+                let difX = self._Pointer.x - (self.dragCtr.x - self.dragCtr.width / 2);
+                let difY = (self.dragCtr.y + self.dragCtr.height / 2) - self._Pointer.y;
                 self.baseDistance = self.calcDistance([self.curSprite.x, self.curSprite.y], [self.curSprite.x + (self.curSprite.width / self.curSprite.scale.x / 2) + difX,
                     self.curSprite.y - (self.curSprite.height / self.curSprite.scale.x / 2) - difY
                 ])
-            } else if (self._Pointer.hitTestSprite(delCtr) && delCtr.visible == true) {
+            } else if (self._Pointer.hitTestSprite(self.delCtr) && self.delCtr.visible == true) {
                 //点击了【删除】控件
                 self.isHitDel = true;
                 console.log('你点到删除控件啦！删除了 [' + self.curSprite._texture.textureCacheIds + ']')
@@ -240,7 +346,7 @@ class DSR {
         //创建精灵
         let _sprite = new Sprite(self.scene[name]);
 
-        _sprite.position.set(self._App.renderer.width / 2, self._App.renderer.height / 2);
+        _sprite.position.set(self._cx, self._cy);
         _sprite.anchor.set(.5, .5);
 
         //存储到精灵数组
