@@ -5,14 +5,12 @@
  */
 //PIXI API
 let Application = PIXI.Application,
+    Container = PIXI.Container,
     loader = PIXI.loader,
     resources = PIXI.loader.resources,
     Sprite = PIXI.Sprite;
 
 class DSR {
-    _App = null //舞台
-    _Tink = null //tink
-    _Pointer = null //pointer
     constructor(opt) {
         let baseSetting = {
             id: '#canvas-box',
@@ -21,6 +19,11 @@ class DSR {
             height: 490,
             bgColor: 0xffffff
         };
+
+        this._App = null //舞台
+        this._Tink = null //tink
+        this._Pointer = null //pointer
+        this._Container = null;
 
         this.msgStyle = new PIXI.TextStyle({
             fontFamily: "Arial",
@@ -33,10 +36,10 @@ class DSR {
 
         //内部变量
         this.resource = opt.resources[0]
+        this.bisicResource = __uri('assets/basic.json');
         this.scene = null;
         this.spriteList = [];
         this.curSprite = null;
-        this.ground = null;
         this.dragCtr = null;
         this.delCtr = null;
         this.isHitSprite = false;
@@ -94,6 +97,7 @@ class DSR {
             _setting = this.setting;
 
         PIXI.loader
+            .add(self.bisicResource)
             .add(self.resource)
             .on('progress', _setting.onLoad)
             .load(setup.bind(this));
@@ -101,12 +105,14 @@ class DSR {
         function setup() {
             //定时循环
             this._App.ticker.add(delta => gameLoop(delta));
+            this._Container = new Container();
+            this._App.stage.addChild(self._Container);
 
             //初始化舞台
             self.initStage();
 
-            //加载完成事件回调
-            _setting.onLoaded && _setting.onLoaded();
+            //创建控件并隐藏
+            this.initCtr();
 
             //添加舞台和按钮事件
             this.tinkEvent();
@@ -114,6 +120,9 @@ class DSR {
 
             //记录缓存
             this.cache.push(self.resource);
+
+            //加载完成事件回调
+            _setting.onLoaded && _setting.onLoaded();
         }
 
         function gameLoop() {
@@ -141,19 +150,24 @@ class DSR {
         let self = this;
         //加载纹理资源
         this.scene = PIXI.loader.resources[self.resource].textures;
-        console.log(this.scene)
 
         this.message.visible = false;
 
         //加载背景图
-        this.ground = new Sprite(self.scene['ground-min.png']);
-        this.ground.anchor.set(.5, .5);
-        this.ground.position.set(self._cx, self._cy);
-        self.autoAdaptation(this.ground);
+        let ground = new Sprite(self.scene['ground-min.png']);
+        ground.anchor.set(.5, .5);
+        ground.position.set(self._cx, self._cy);
+        self.autoAdaptation(ground);
 
+        this._Container.addChild(ground);
+    }
+
+    initCtr() {
+        let self = this;
         //创建控件并隐藏
-        this.dragCtr = new Sprite(self.scene['icon-drag.png']);
-        this.delCtr = new Sprite(self.scene['icon-del.png']);
+        this.basicCtr = PIXI.loader.resources[self.bisicResource].textures;
+        this.dragCtr = new Sprite(self.basicCtr['icon-drag.png']);
+        this.delCtr = new Sprite(self.basicCtr['icon-del.png']);
 
         this.dragCtr.anchor.set(.5, .5);
         this.delCtr.anchor.set(.5, .5);
@@ -162,7 +176,7 @@ class DSR {
         this.delCtr.visible = false;
 
         //添加控件到舞台
-        this._App.stage.addChild(this.dragCtr, this.delCtr, this.ground);
+        this._App.stage.addChild(this.dragCtr, this.delCtr);
     }
 
     autoAdaptation(sprite) {
@@ -213,7 +227,7 @@ class DSR {
 
     //清空画面内容
     clean() {
-        for(let i = 0;i<this._App.stage.children.length; i++) {
+        for (let i = 0; i < this._App.stage.children.length; i++) {
             let child = this._App.stage.children[i];
             console.log(child)
             // if(child)
@@ -224,12 +238,15 @@ class DSR {
     resetStage() {
         let self = this;
         //清空当前画布
-        self._App.stage.removeChildren();
+        // self._App.stage.removeChildren();
+        self._Container.removeChildren();
+        self._Tink.makeUndraggable(self.spriteList);
         this.spriteList = [];
         this.curSprite = null;
-        this.ground = null;
-        this.dragCtr = null;
-        this.delCtr = null;
+        // this.dragCtr = null;
+        // this.delCtr = null;
+        this.dragCtr.visible = false;
+        this.delCtr.visible = false;
         this.isHitSprite = false;
         this.isHitDrag = false;
         this.isHitDel = false;
@@ -274,7 +291,7 @@ class DSR {
                 //删除当前精灵，并隐藏控件
                 // t.makeUndraggable(curSprite);
                 self.spriteList.splice(self.spriteList.indexOf(self.curSprite), 1);
-                self._App.stage.removeChild(self.curSprite);
+                self._Container.removeChild(self.curSprite);
                 self._Tink.makeUndraggable(self.curSprite);
                 self.showCtr(false);
                 self.updateBtn();
@@ -352,7 +369,10 @@ class DSR {
         //存储到精灵数组
         self.spriteList.push(_sprite);
         //添加到舞台
-        self._App.stage.addChild(_sprite);
+        // self._App.stage.addChild(_sprite);
+        self._Container.addChild(_sprite);
+
+        console.log(self._Container);
         //给精灵绑定拖放交互
         self._Tink.makeDraggable(_sprite);
         //给精灵添加交互绑定-让精灵可以像button一样有点击事件绑定
@@ -400,7 +420,7 @@ class DSR {
     updateBtn() {
         let self = this,
             _setting = this.setting,
-            children = this._App.stage.children,
+            children = this._Container.children,
             $btn = $(_setting.btns)
 
         $btn.removeClass('disabled')

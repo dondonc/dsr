@@ -1,0 +1,28 @@
+{"frames": {
+
+"icon-del.png":
+{
+	"frame": {"x":0,"y":0,"w":35,"h":33},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":33},
+	"sourceSize": {"w":35,"h":33}
+},
+"icon-drag.png":
+{
+	"frame": {"x":0,"y":43,"w":35,"h":34},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":34},
+	"sourceSize": {"w":35,"h":34}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "basic.png",
+	"format": "RGBA8888",
+	"size": {"w":35,"h":77},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:4227c0a79d82f1427620e8f30d82de39:26f3a77e05418e4b8fd3c8c127dbafd4:532e39fc0dbecca3521067064434d3e9$"
+}
+}
