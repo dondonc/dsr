@@ -17,7 +17,7 @@ class DSR {
 
         this.msgStyle = new PIXI.TextStyle({
             fontFamily: "Arial",
-            fill: "white",
+            fill: "black",
             fontSize: 26
         });
 
@@ -73,6 +73,9 @@ class DSR {
         // 初始化Tink.js
         this._Tink = new Tink(PIXI, this._App.view);
 
+        this._Container = new __Container();
+        this._App.stage.addChild(self._Container);
+
         // 提示信息
         self.message = new PIXI.Text("Loading...", self.msgStyle);
         self.message.position.set(self._cx, self._cy);
@@ -101,8 +104,6 @@ class DSR {
             self.loading = false;
             // 定时循环
             this._App.ticker.add(delta => gameLoop(delta));
-            this._Container = new __Container();
-            this._App.stage.addChild(self._Container);
 
             // 初始化舞台
             self.initStage();
@@ -284,12 +285,8 @@ class DSR {
                 // 点击了【缩放】控件
                 self.isHitDrag = true;
                 console.log('你点到缩放控件啦！缩放了 [' + self.curSprite._texture.textureCacheIds + ']')
-
-                let difX = self._Pointer.x - (self.dragCtr.x - self.dragCtr.width / 2);
-                let difY = (self.dragCtr.y + self.dragCtr.height / 2) - self._Pointer.y;
-                self.baseDistance = self.calcDistance([self.curSprite.x, self.curSprite.y], [self.curSprite.x + (self.curSprite.width / self.curSprite.scale.x / 2) + difX,
-                    self.curSprite.y - (self.curSprite.height / self.curSprite.scale.x / 2) - difY
-                ])
+                let _scale = self.curSprite.scale.x == 0 ? 1 : self.curSprite.scale.x;
+                self.baseDistance = self.calcDistance([self.curSprite.x, self.curSprite.y], [self._Pointer.x, self._Pointer.y]) / _scale;
             } else if (self._Pointer.hitTestSprite(self.delCtr) && self.delCtr.visible == true) {
                 // 点击了【删除】控件
                 self.isHitDel = true;
