@@ -37,6 +37,7 @@ class DSR {
         this.isHitDel = false;
         this.baseDistance = null;
         this.cache = [];
+        this.loading = false;
 
         this.width = opt.width;
         this.height = opt.height;
@@ -89,6 +90,7 @@ class DSR {
         let self = this,
             _setting = this.setting;
 
+        self.loading = true;
         PIXI.loader
             .add(self.bisicResource)
             .add(self.resource)
@@ -96,6 +98,7 @@ class DSR {
             .load(setup.bind(this));
 
         function setup() {
+            self.loading = false;
             // 定时循环
             this._App.ticker.add(delta => gameLoop(delta));
             this._Container = new __Container();
@@ -195,6 +198,7 @@ class DSR {
         // console.log(resource)
         self.message.visible = true;
         self.resource = resource;
+        self.loading = true;
 
         // 加载资源
         if (self.cache.indexOf(resource) < 0) {
@@ -206,6 +210,7 @@ class DSR {
         }
 
         function setup2() {
+            self.loading = false;
             // 重置当前画布
             self.resetStage();
 
@@ -214,6 +219,8 @@ class DSR {
 
             // 记录缓存
             self.cache.push(self.resource);
+
+            _setting.onChange && _setting.onChange();
         }
 
     }
@@ -234,9 +241,9 @@ class DSR {
             children = this._Container.children;
 
         // 清空当前画布  全部清除 or 清除除了ground以外的所有内容
-        if(type == 0) {
+        if (type == 0) {
             this._Container.removeChildren(0);
-        } else if(type == 1 && children.length > 1) {
+        } else if (type == 1 && children.length > 1) {
             this._Container.removeChildren(1);
         }
 
@@ -337,6 +344,7 @@ class DSR {
 
         // 物件按钮事件
         $(_setting.btns).on('click', function () {
+            if (self.loading) return;
             let $this = $(this),
                 _name = $this.data('name')
 

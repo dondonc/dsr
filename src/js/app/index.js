@@ -15,6 +15,10 @@ nie.define('Index', () => {
                 height: 490, //canvas height【必传】
                 resources: self.resources, //图片资源【必传】
                 bgColor: '#42496b', //画布背景色，选传，默认白色#fff【选传】
+                onChange: function () {
+                    //切换主题时执行的回调
+                    console.log('chaaaaaaaange!');
+                },
                 onInit: function () { //【选传】
                     //初始化完成回调
                     console.log('init complete!');
@@ -38,13 +42,17 @@ nie.define('Index', () => {
         $(".theme-btn").on('click', function () {
             let _i = $(this).data('theme');
 
+            if (_dsr.loading) {
+                console.log('正在加载资源，请稍等')
+                return;
+            }
             $(this).addClass('act').siblings().removeClass('act');
             //切换主题
             _dsr.change(dsrFun.resources[_i]);
         })
 
         //清空当前画面内容
-        $(".btn-clean").on('click', function() {
+        $(".btn-clean").on('click', function () {
             _dsr.clean();
         })
     };
