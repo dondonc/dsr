@@ -364,10 +364,12 @@ class DSR {
         // 添加内容到画布
         console.log('[' + name + '] 添加到画布')
         // 创建精灵
-        let _sprite = new __Sprite(self.scene[name]);
+        let _sprite = new __Sprite(self.scene[name]),
+            _scale = self.setting.basicScale ? self.setting.basicScale : 1;
 
         _sprite.position.set(self._cx, self._cy);
         _sprite.anchor.set(.5, .5);
+        _sprite.scale.set(_scale, _scale);
 
         // 存储到精灵数组
         self.spriteList.push(_sprite);

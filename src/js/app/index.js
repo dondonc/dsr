@@ -14,6 +14,7 @@ nie.define('Index', () => {
                 width: 650, //canvas width【必传】
                 height: 490, //canvas height【必传】
                 resources: self.resources, //图片资源【必传】
+                basicScale: .5, // 默认物件图缩放比例，用于适配移动端 【选传】不传默认为：1（不缩放）
                 // bgColor: '#42496b', //画布背景色，选传，默认白色#fff【选传】
                 onChange: function () {
                     //切换主题时执行的回调
