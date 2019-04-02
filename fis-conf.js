@@ -66,6 +66,11 @@ fis.match(/^\/src\/data\/(.*)$/i,{
     useDomain : true,
     useSprite : true
 },true);
+fis.match(/^\/src\/assets\/(.*)$/i,{
+    useHash : false,
+    useDomain : true,
+    useSprite : true
+},true);
 
 //配置打本地包
 
