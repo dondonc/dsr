@@ -38,7 +38,7 @@ fis.match('**.html', {
 fis.match('**.js', {
     preprocessor: fis.plugin('resload'),
     postprocessor : fis.plugin('replace',{
-        local_cdn : "http://127.0.0.1:8080",
+        local_cdn : "http://t.163.com:8080",
         debug : "local"
     })
 });
@@ -68,7 +68,7 @@ fis.match(/^\/src\/data\/(.*)$/i,{
 },true);
 fis.match(/^\/src\/assets\/(.*)$/i,{
     useHash : false,
-    useDomain : true,
+    useDomain : false,
     useSprite : true
 },true);
 

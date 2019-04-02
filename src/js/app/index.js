@@ -3,8 +3,8 @@ nie.define('Index', () => {
     // DSR
     let dsrFun = {
         resources: [
-            __uri('../../assets/theme0.json'),
-            __uri('../../assets/theme1.json')
+            __CDNPATH + '/assets/theme0.json',
+            __CDNPATH + '/assets/theme1.json'
         ],
         init() {
             let self = this

@@ -60,15 +60,18 @@ class DSR {
         // 创建画布
         this._App = new __Application({
             width: _setting.width,
-            height: _setting.height
+            height: _setting.height,
+            antialias: true,
+            transparent: this.setting.bgColor ? false : true
         });
 
         // 画布添加到容器
         document.getElementById(_setting.id.replace('#', '')).appendChild(this._App.view);
 
         // 设置背景色
-        let bgColor = this.setting.bgColor ? this.setting.bgColor.replace('#', '') : 'ffffff';
-        this._App.renderer.backgroundColor = '0x' + bgColor;
+        if (this.setting.bgColor) {
+            this._App.renderer.backgroundColor = '0x' + this.setting.bgColor.replace('#', '');
+        }
 
         // 初始化Tink.js
         this._Tink = new Tink(PIXI, this._App.view);
@@ -340,7 +343,7 @@ class DSR {
             _setting = this.setting;
 
         // 物件按钮事件
-        $(_setting.btns).on('click', function () {
+        $(document).delegate(_setting.btns, 'click', function () {
             if (self.loading) return;
             let $this = $(this),
                 _name = $this.data('name')
