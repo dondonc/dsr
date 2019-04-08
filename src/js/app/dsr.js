@@ -32,9 +32,11 @@ class DSR {
         this.curSprite = null;
         this.dragCtr = null;
         this.delCtr = null;
+        this.flipCtr = null;
         this.isHitSprite = false;
         this.isHitDrag = false;
         this.isHitDel = false;
+        this.isHitFlip = false;
         this.baseDistance = null;
         this.cache = [];
         this.loading = false;
@@ -168,15 +170,18 @@ class DSR {
         this.basicCtr = __resources[self.bisicResource].textures;
         this.dragCtr = new __Sprite(self.basicCtr['icon-drag.png']);
         this.delCtr = new __Sprite(self.basicCtr['icon-del.png']);
+        this.flipCtr = new __Sprite(self.basicCtr['icon-flip.png']);
 
         this.dragCtr.anchor.set(.5, .5);
         this.delCtr.anchor.set(.5, .5);
+        this.flipCtr.anchor.set(.5, .5);
 
         this.dragCtr.visible = false;
         this.delCtr.visible = false;
+        this.flipCtr.visible = false;
 
         // 添加控件到舞台
-        this._App.stage.addChild(this.dragCtr, this.delCtr);
+        this._App.stage.addChild(this.dragCtr, this.delCtr, this.flipCtr);
     }
 
     autoAdaptation(sprite) {
@@ -257,9 +262,11 @@ class DSR {
         this.curSprite = null;
         this.dragCtr.visible = false;
         this.delCtr.visible = false;
+        this.flipCtr.visible = false;
         this.isHitSprite = false;
         this.isHitDrag = false;
         this.isHitDel = false;
+        this.isHitFlip = false;
         this.baseDistance = null;
 
         // 重置按钮样式
@@ -270,7 +277,8 @@ class DSR {
     tinkEvent() {
         let self = this,
             dragCtr = self.dragCtr,
-            delCtr = self.delCtr
+            delCtr = self.delCtr,
+            flipCtr = self.flipCtr;
 
         self._Pointer = this._Tink.makePointer();
 
@@ -287,13 +295,13 @@ class DSR {
             if (self._Pointer.hitTestSprite(self.dragCtr) && self.dragCtr.visible == true) {
                 // 点击了【缩放】控件
                 self.isHitDrag = true;
-                console.log('你点到缩放控件啦！缩放了 [' + self.curSprite._texture.textureCacheIds + ']')
+                console.log('你点到缩放控件啦！缩放了 [' + self.curSprite._texture.textureCacheIds + ']');
                 let _scale = self.curSprite.scale.x == 0 ? 1 : self.curSprite.scale.x;
                 self.baseDistance = self.calcDistance([self.curSprite.x, self.curSprite.y], [self._Pointer.x, self._Pointer.y]) / _scale;
             } else if (self._Pointer.hitTestSprite(self.delCtr) && self.delCtr.visible == true) {
                 // 点击了【删除】控件
                 self.isHitDel = true;
-                console.log('你点到删除控件啦！删除了 [' + self.curSprite._texture.textureCacheIds + ']')
+                console.log('你点到删除控件啦！删除了 [' + self.curSprite._texture.textureCacheIds + ']');
                 // 删除当前精灵，并隐藏控件
                 // t.makeUndraggable(curSprite);
                 self.spriteList.splice(self.spriteList.indexOf(self.curSprite), 1);
@@ -301,28 +309,34 @@ class DSR {
                 self._Tink.makeUndraggable(self.curSprite);
                 self.showCtr(false);
                 self.updateBtn();
+            } else if (self._Pointer.hitTestSprite(self.flipCtr) && self.flipCtr.visible == true) {
+                // 点击了【翻转】控件
+                self.isHitFlip = true;
+                console.log('你点到翻转控件啦！翻转了 [' + self.curSprite._texture.textureCacheIds + ']');
+                let _deg = self.curSprite.skew.y == Math.PI ? 0 : Math.PI;
+                self.curSprite.skew.set(0, _deg);
             } else {
                 // console.log(pointer.hitTestSprite(face0));
                 self.isHitSprite = false;
                 for (let i = self.spriteList.length - 1; i >= 0; i--) {
                     // console.log()
                     if (self._Pointer.hitTestSprite(self.spriteList[i])) {
-                        let _cur = self.spriteList[i]
+                        let _cur = self.spriteList[i];
                         _cur.draggable = true;
-                        // console.log(_cur._texture.textureCacheIds)
+                        // console.log(_cur._texture.textureCacheIds);
                         self.isHitSprite = true;
-                        self.spriteList.splice(i, 1)
-                        self.spriteList.push(_cur)
-                        self.curSprite = _cur
+                        self.spriteList.splice(i, 1);
+                        self.spriteList.push(_cur);
+                        self.curSprite = _cur;
                         break;
                     }
                 }
                 if (self.isHitSprite) {
                     console.log('isHitSprite : ' + self.isHitSprite + ', 选中 ' + '[' + self.curSprite._texture
-                        .textureCacheIds + ']')
+                        .textureCacheIds + ']');
                 } else {
                     //没有点中任何东西
-                    console.log('未选中任何物件')
+                    console.log('未选中任何物件');
                     self.curSprite = null;
                 }
                 self.showCtr(self.isHitSprite);
@@ -334,6 +348,7 @@ class DSR {
         self._Pointer.release = () => {
             this.isHitDrag = false;
             this.isHitDel = false;
+            this.isHitFlip = false;
         }
     }
 
@@ -365,11 +380,13 @@ class DSR {
         console.log('[' + name + '] 添加到画布')
         // 创建精灵
         let _sprite = new __Sprite(self.scene[name]),
-            _scale = self.setting.basicScale ? self.setting.basicScale : 1;
+            _scale = self.setting.basicScale ? self.setting.basicScale : 1,
+            _direction = self.setting.basicDirection && self.setting.basicDirection == 'flip' ? Math.PI : 0;
 
         _sprite.position.set(self._cx, self._cy);
         _sprite.anchor.set(.5, .5);
         _sprite.scale.set(_scale, _scale);
+        _sprite.skew.set(0, _direction);
 
         // 存储到精灵数组
         self.spriteList.push(_sprite);
@@ -398,10 +415,12 @@ class DSR {
     showCtr(boolean) {
         this.dragCtr.visible = boolean;
         this.delCtr.visible = boolean;
+        this.flipCtr.visible = boolean;
 
         // 同时更新控件在舞台的层级
         this.updateStage(this.dragCtr);
         this.updateStage(this.delCtr);
+        this.updateStage(this.flipCtr);
     }
 
     // 更新控件坐标
@@ -415,6 +434,8 @@ class DSR {
         this.dragCtr.y = s_y - s_height / 2 - this.dragCtr.height / 2;
         this.delCtr.x = s_x - s_width / 2 - this.delCtr.width / 2;
         this.delCtr.y = s_y + s_height / 2 + this.delCtr.height / 2;
+        this.flipCtr.x = s_x - s_width / 2 - this.flipCtr.width / 2;
+        this.flipCtr.y = s_y - s_height / 2 - this.flipCtr.height / 2;
     }
 
     // 更新物件按钮显示

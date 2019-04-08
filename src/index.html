@@ -31,12 +31,14 @@
         .btn-box {
             width: 100%;
             text-align: center;
-            margin-top: 30px;
+            padding: 0 100px;
+            box-sizing: border-box;
         }
 
         .btn {
-            width: 120px;
+            width: 100px;
             height: 40px;
+            margin: 0 5px 5px;
         }
 
         .btn.disabled {
@@ -45,7 +47,9 @@
         }
 
         .sub-title {
+            text-align: center;
             line-height: 50px;
+            margin-top: 30px;
         }
 
         .theme-btn {
@@ -70,25 +74,22 @@
 <body>
     <div class="btn-box">
         <p class="sub-title">主题按钮</p>
-        <button class="theme-btn act" data-theme="0">流星系列</button>
-        <button class="theme-btn" data-theme="1">浓情系列</button>
+        <button class="theme-btn act" data-theme="0">洞房花烛系列</button>
+        <button class="theme-btn" data-theme="1">玲珑兔系列</button>
+        <button class="theme-btn" data-theme="2">雪之缘系列</button>
     </div>
 
     <!-- canvas父容器 -->
     <div class="canvas-box" id="canvas-box"></div>
 
-    <div class="btn-box">
-        <p class="sub-title">流星系列-物件按钮</p>
-        <button class="btn" data-name="face0.png">有趣-face0</button>
-        <button class="btn" data-name="face1.png">微笑-face1</button>
-        <button class="btn" data-name="face2.png">狂笑-face2</button>
-    </div>
-    <div class="btn-box">
+    <p class="sub-title">流星系列-物件按钮</p>
+    <div class="btn-box wj-btn"></div>
+    <!-- <div class="btn-box">
         <p class="sub-title">浓情系列-物件按钮</p>
         <button class="btn" data-name="iu0.png">声哥1-iu0</button>
         <button class="btn" data-name="iu1.jpg">声哥2-iu1</button>
         <button class="btn" data-name="moba.png">平安京-moba</button>
-    </div>
+    </div> -->
 
     <button class="btn-clean">清空</button>
 
@@ -98,6 +99,23 @@
     <script src="js/app/tink.js"></script>
     <script src="js/app/dsr.js"></script>
     <script src="js/app/index.js"></script>
+    <!-- <script>
+        //获取物件名
+        $.ajax({
+            url: 'assets/theme2.json',
+            success: function (ddd) {
+                console.log(ddd.frames)
+                let arr = [];
+                for (let key in ddd.frames) {
+                    if (key != 'ground-min.png') {
+                        arr.push(key);
+                    }
+                }
+
+                console.log(arr)
+            }
+        });
+    </script> -->
 </body>
 
 </html>
