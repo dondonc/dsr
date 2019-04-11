@@ -198,7 +198,8 @@ class DSR {
             ratio = self._App.renderer.width / sprite.width;
         }
         sprite.scale.set(ratio, ratio);
-
+        // console.log(ratio)
+        // self.setting.basicScale = 0.35;
     }
 
     change(resource) {
