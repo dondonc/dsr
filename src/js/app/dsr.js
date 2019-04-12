@@ -192,14 +192,14 @@ class DSR {
 
         if (ratioApp >= ratioSprite) {
             // 高缩放
-            ratio = self._App.renderer.height / sprite.height;
+            // ratio = self._App.renderer.height / sprite.height;
+            ratio = self._App.renderer.width / sprite.width;
         } else {
             // 宽缩放
-            ratio = self._App.renderer.width / sprite.width;
+            ratio = self._App.renderer.height / sprite.height;
+            // ratio = self._App.renderer.width / sprite.width;
         }
         sprite.scale.set(ratio, ratio);
-        // console.log(ratio)
-        // self.setting.basicScale = 0.35;
     }
 
     change(resource) {

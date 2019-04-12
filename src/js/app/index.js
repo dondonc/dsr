@@ -5,7 +5,16 @@ nie.define('Index', () => {
         resources: [
             __CDNPATH + '/assets/theme0.json',
             __CDNPATH + '/assets/theme1.json',
-            __CDNPATH + '/assets/theme2.json'
+            __CDNPATH + '/assets/theme2.json',
+            __CDNPATH + '/assets/theme3.json',
+            __CDNPATH + '/assets/theme4.json',
+            __CDNPATH + '/assets/theme5.json',
+            __CDNPATH + '/assets/theme6.json',
+            __CDNPATH + '/assets/theme7.json',
+            __CDNPATH + '/assets/theme8.json',
+            __CDNPATH + '/assets/theme9.json',
+            __CDNPATH + '/assets/theme10.json',
+            __CDNPATH + '/assets/theme11.json'
         ],
         init() {
             let self = this
@@ -41,9 +50,18 @@ nie.define('Index', () => {
 
     //更新按钮
     let btnsArr = [
-        ["00090.png", "01110.png", "01120.png", "02140.png", "02150.png", "03080.png", "04130.png", "04140.png", "04150.png", "05080.png", "06100.png", "07070.png", "08210.png", "08220.png", "08230.png", "061120.png"],
-        ["00070.png", "00080.png", "01090.png", "01100.png", "02110.png", "02120.png", "03060.png", "04100.png", "04110.png", "04120.png", "05070.png", "06080.png", "08180.png", "08190.png", "08200.png", "44171.png", "060920.png"],
-        ["00120.png", "00130.png", "00140.png", "01150.png", "01160.png", "01170.png", "01180.png", "02180.png", "02190.png", "02200.png", "02210.png", "02220.png", "03100.png", "03110.png", "04190.png", "04200.png", "04210.png", "04220.png", "04230.png", "04240.png", "05100.png", "05110.png", "05120.png", "06140.png", "06160.png", "07080.png", "07090.png", "07100.png", "08270.png", "08280.png", "08290.png", "08300.png", "08310.png", "08320.png", "08330.png", "08350.png", "08360.png", "061511.png", "061711.png"]
+        ["00091.png", "01111.png", "01121.png", "02141.png", "02151.png", "03080.png", "04131.png", "04141.png", "04151.png", "05081.png", "06101.png", "07071.png", "08210.png", "08221.png", "08231.png", "061120.png"],
+        ["00071.png", "00081.png", "01090.png", "01101.png", "02110.png", "02121.png", "03060.png", "04101.png", "04111.png", "04121.png", "05071.png", "06080.png", "08181.png", "08190.png", "08201.png", "060920.png"],
+        ["00151.png", "00161.png", "01191.png", "01200.png", "02231.png", "03121.png", "03130.png", "04251.png", "04260.png", "05130.png", "06191.png", "07111.png", "07120.png", "08371.png", "08381.png", "08391.png", "08400.png", "08411.png", "08421.png", "08431.png", "08440.png", "061821.png"],
+        ["00101.png", "00111.png", "01130.png", "01141.png", "02161.png", "02171.png", "03090.png", "04161.png", "04171.png", "04181.png", "05091.png", "06121.png", "08241.png", "08251.png", "08261.png", "061320.png"],
+        ["00121.png", "00131.png", "01150.png", "01161.png", "02181.png", "02191.png", "03100.png", "04191.png", "04201.png", "04211.png", "05101.png", "06141.png", "08270.png", "08280.png", "08290.png", "061511.png"],
+        ["00141.png", "01171.png", "01180.png", "02201.png", "02211.png", "02221.png", "03110.png", "04221.png", "04231.png", "04240.png", "05111.png", "05121.png", "06161.png", "07081.png", "07091.png", "07101.png", "08301.png", "08310.png", "08321.png", "08331.png", "08351.png", "08361.png", "061721.png"],
+        ["00171.png", "01211.png", "01221.png", "01231.png", "02241.png", "02251.png", "03140.png", "04271.png", "04281.png", "04291.png", "04301.png", "05141.png", "05151.png", "06201.png", "07131.png", "07141.png", "08450.png", "08461.png", "08471.png", "08481.png", "08491.png", "08501.png", "08511.png", "062121.png"],
+        ["44170.png", "44171.png"],
+        ["13311.png", "13321.png", "14420.png", "44301.png", "44330.png", "44341.png", "44351.png", "44361.png", "44371.png", "44381.png", "44390.png", "44401.png", "44411.png"],
+        ["44210.png", "44220.png", "44221.png", "44230.png", "44240.png", "44241.png", "44250.png", "44251.png", "44260.png", "44261.png", "44270.png", "44271.png", "44280.png"],
+        ["44290.png"],
+        ["44420.png", "44430.png", "44440.png", "44450.png", "44460.png"]
     ]
     let undateBtns = (index) => {
         let btns = btnsArr[index],
