@@ -15,11 +15,11 @@ class DSR {
         this._Pointer = null // pointer
         this._Container = null; // 物件组容器
 
-        this.msgStyle = new PIXI.TextStyle({
-            fontFamily: "Arial",
-            fill: "black",
-            fontSize: 26
-        });
+        // this.msgStyle = new PIXI.TextStyle({
+        //     fontFamily: "Arial",
+        //     fill: "black",
+        //     fontSize: 26
+        // });
 
         // 参数设置
         this.setting = opt;
@@ -82,10 +82,10 @@ class DSR {
         this._App.stage.addChild(self._Container);
 
         // 提示信息
-        self.message = new PIXI.Text("Loading...", self.msgStyle);
-        self.message.position.set(self._cx, self._cy);
-        self.message.anchor.set(.5, .5);
-        this._App.stage.addChild(self.message);
+        // self.message = new PIXI.Text("Loading...", self.msgStyle);
+        // self.message.position.set(self._cx, self._cy);
+        // self.message.anchor.set(.5, .5);
+        // this._App.stage.addChild(self.message);
 
         // 开始加载
         this.load();
@@ -110,11 +110,11 @@ class DSR {
             // 定时循环
             this._App.ticker.add(delta => gameLoop(delta));
 
-            // 初始化舞台
-            self.initStage();
-
             // 创建控件并隐藏
             this.initCtr();
+
+            // 初始化舞台
+            self.initStage();
 
             // 添加舞台和按钮事件
             this.tinkEvent();
@@ -153,7 +153,7 @@ class DSR {
         // 加载纹理资源
         this.scene = __resources[self.resource].textures;
 
-        this.message.visible = false;
+        self.loadingBar.visible = false;
 
         // 加载背景图
         let ground = new __Sprite(self.scene['ground-min.png']);
@@ -171,17 +171,22 @@ class DSR {
         this.dragCtr = new __Sprite(self.basicCtr['icon-drag.png']);
         this.delCtr = new __Sprite(self.basicCtr['icon-del.png']);
         this.flipCtr = new __Sprite(self.basicCtr['icon-flip.png']);
+        this.loadingBar = new __Sprite(self.basicCtr['loading.png']);
 
         this.dragCtr.anchor.set(.5, .5);
         this.delCtr.anchor.set(.5, .5);
         this.flipCtr.anchor.set(.5, .5);
+        // this.loadingBar.anchor.set(.5, .5);
 
         this.dragCtr.visible = false;
         this.delCtr.visible = false;
         this.flipCtr.visible = false;
+        this.loadingBar.visible = true;
+
+        this.loadingBar.position.set((self.width - self.loadingBar.width - 1) / 2, (self.height - self.loadingBar.height - 1) / 2);
 
         // 添加控件到舞台
-        this._App.stage.addChild(this.dragCtr, this.delCtr, this.flipCtr);
+        this._App.stage.addChild(this.dragCtr, this.delCtr, this.flipCtr, this.loadingBar);
     }
 
     autoAdaptation(sprite) {
@@ -206,9 +211,10 @@ class DSR {
         let self = this,
             _setting = this.setting;
         // console.log(resource)
-        self.message.visible = true;
+        // self.message.visible = true;
         self.resource = resource;
         self.loading = true;
+        self.loadingBar.visible = true;
 
         // 加载资源
         if (self.cache.indexOf(resource) < 0) {
@@ -221,6 +227,7 @@ class DSR {
 
         function setup2() {
             self.loading = false;
+            self.loadingBar.visible = false;
             // 重置当前画布
             self.resetStage();
 

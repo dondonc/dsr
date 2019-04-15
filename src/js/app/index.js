@@ -21,8 +21,8 @@ nie.define('Index', () => {
             return new DSR({
                 id: "#canvas-box", //canvas父容器id，用于插入canvas画布【必传】
                 btns: ".btn", //按钮className【必传】
-                width: 650, //canvas width【必传】
-                height: 490, //canvas height【必传】
+                width: 650, //canvas width【必传】650
+                height: 490, //canvas height【必传】490
                 resources: self.resources, //图片资源【必传】
                 basicScale: 0.35, // 默认物件图缩放比例，用于适配移动端 【选传】不传默认为：1（不缩放）
                 // basicDirection: 'flip', // 默认物件图水平方向 【选传】不传默认为：default（不翻转）可选值【default，flip】
@@ -62,7 +62,7 @@ nie.define('Index', () => {
         ["44210.png", "44220.png", "44221.png", "44230.png", "44240.png", "44241.png", "44250.png", "44251.png", "44260.png", "44261.png", "44270.png", "44271.png", "44280.png"],
         ["44290.png"],
         ["44420.png", "44430.png", "44440.png", "44450.png", "44460.png"]
-    ]
+    ];
     let undateBtns = (index) => {
         let btns = btnsArr[index],
             _h = ``;
