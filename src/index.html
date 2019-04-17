@@ -68,6 +68,47 @@
             top: 160px;
             right: 50px;
         }
+
+        .ctr-box {
+            width: 100%;
+            padding: 10px 0;
+        }
+
+        .rangbox {
+            width: 350px;
+            height: 22px;
+            margin: 0 auto;
+        }
+
+        .rangbox button {
+            float: left;
+            display: block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            border: 1px solid #000;
+            background: #dfdfdf;
+            text-align: center;
+            font-style: normal;
+            cursor: pointer;
+        }
+
+        .rangeBar {
+            float: left;
+            display: block;
+            cursor: pointer;
+            outline: 0;
+            padding: 0 20px;
+            margin: 0 10px;
+            width: 200px;
+            height: 22px;
+            border-radius: 5px;
+        }
+
+        .rangeNum {
+            float: left;
+            padding-left: 20px;
+        }
     </style>
 </head>
 
@@ -91,6 +132,14 @@
 
     <!-- canvas父容器 -->
     <div class="canvas-box" id="canvas-box"></div>
+
+    <div class="ctr-box">
+        <div class="rangbox">
+            <button data-num="-10">-</button><input type="range" value="0" min="0" max="100" class="rangeBar"><button
+                data-num="10">+</button>
+            <p class="rangeNum">0</p>
+        </div>
+    </div>
 
     <p class="sub-title">物件按钮</p>
     <div class="btn-box wj-btn"></div>

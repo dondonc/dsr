@@ -206,7 +206,6 @@ class Tink {
 
             //The pointer's mouse `moveHandler`
             moveHandler(event) {
-
                 //Get the element that's firing the event
                 let element = event.target;
 
@@ -338,9 +337,9 @@ class Tink {
                     //Get the position of the sprite's edges using global
                     //coordinates
                     let left = sprite.gx - xAnchorOffset,
-                        right = sprite.gx + sprite.width - xAnchorOffset,
+                        right = sprite.gx + sprite.width * 2 - xAnchorOffset,
                         top = sprite.gy - yAnchorOffset,
-                        bottom = sprite.gy + sprite.height - yAnchorOffset;
+                        bottom = sprite.gy + sprite.height * 2 - yAnchorOffset;
 
                     //Find out if the pointer is intersecting the rectangle.
                     //`hit` will become `true` if the pointer is inside the
@@ -435,7 +434,6 @@ class Tink {
     //A method that implments drag-and-drop functionality 
     //for each pointer
     updateDragAndDrop(draggableSprites) {
-
         //Create a pointer if one doesn't already exist
         if (this.pointers.length === 0) {
             this.makePointer(this.element, this.scale);
@@ -447,7 +445,6 @@ class Tink {
 
             //Check whether the pointer is pressed down
             if (pointer.isDown) {
-
                 //You need to capture the co-ordinates at which the pointer was
                 //pressed down and find out if it's touching a sprite
 
@@ -466,8 +463,8 @@ class Tink {
 
                             //Calculate the difference between the pointer's
                             //position and the sprite's position
-                            pointer.dragOffsetX = pointer.x - sprite.gx;
-                            pointer.dragOffsetY = pointer.y - sprite.gy;
+                            pointer.dragOffsetX = pointer.x - sprite.gx * 2;
+                            pointer.dragOffsetY = pointer.y - sprite.gy * 2;
 
                             //Set the sprite as the pointer's `dragSprite` property
                             pointer.dragSprite = sprite;
@@ -496,8 +493,8 @@ class Tink {
                 //If the pointer is down and it has a `dragSprite`, make the sprite follow the pointer's
                 //position, with the calculated offset
                 else {
-                    pointer.dragSprite.x = pointer.x - pointer.dragOffsetX;
-                    pointer.dragSprite.y = pointer.y - pointer.dragOffsetY;
+                    pointer.dragSprite.x = (pointer.x - pointer.dragOffsetX) / 2;
+                    pointer.dragSprite.y = (pointer.y - pointer.dragOffsetY) / 2;
                 }
             }
 

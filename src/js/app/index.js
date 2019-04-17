@@ -94,6 +94,24 @@ nie.define('Index', () => {
         $(".btn-clean").on('click', function () {
             _dsr.clean();
         })
+
+        // 控制条事件
+        let $range = $(".rangeBar")
+        $(".rangbox button").on('click', function () {
+            let num = $(this).data('num');
+            let _val = parseInt($range.val());
+            _val += num;
+            _val = _val <= 0 ? 0 : _val >= 100 ? 100 : _val;
+            $range.val(_val).trigger('porpertychange');
+        })
+
+        $range.on('input porpertychange', function () {
+            //逻辑部分
+            let _val = parseInt($range.val());
+            let ratio = (100 + _val) / 100;
+            _dsr.range(ratio);
+            $(".rangeNum").text('缩放比例：[' + ratio + ']；进度：[' + _val + ']');
+        });
     };
 
     pageEvent();

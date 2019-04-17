@@ -79,6 +79,8 @@ class DSR {
         this._Tink = new Tink(PIXI, this._App.view);
 
         this._Container = new __Container();
+        this._Container.pivot.set(self.width / 2, self.height / 2);
+        this._Container.position.set(self.width / 2, self.height / 2);
         this._App.stage.addChild(self._Container);
 
         // 提示信息
@@ -417,6 +419,12 @@ class DSR {
         self.showCtr(true);
         // 更新控件坐标
         self.updateCtr(_sprite);
+    }
+
+    range(ratio) {
+        let self = this
+
+        self._Container.scale.set(ratio, ratio);
     }
 
     // 展示控件
