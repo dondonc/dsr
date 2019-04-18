@@ -75,7 +75,7 @@
         }
 
         .rangbox {
-            width: 350px;
+            width: 300px;
             height: 22px;
             margin: 0 auto;
         }
@@ -106,8 +106,25 @@
         }
 
         .rangeNum {
-            float: left;
+            text-align: center;
             padding-left: 20px;
+        }
+
+        .directioncbox {
+            width: 120px;
+            height: 120px;
+            position: fixed;
+            right: 100px;
+            top: 570px;
+        }
+
+        .directioncbox button,
+        .directioncbox i {
+            float: left;
+            display: block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
         }
     </style>
 </head>
@@ -137,8 +154,20 @@
         <div class="rangbox">
             <button data-num="-10">-</button><input type="range" value="0" min="0" max="100" class="rangeBar"><button
                 data-num="10">+</button>
-            <p class="rangeNum">0</p>
         </div>
+        <p class="rangeNum">缩放比例：[1]；进度：[0]</p>
+    </div>
+
+    <div class="directioncbox">
+        <i></i>
+        <button data-dir="up">↑</button>
+        <i></i>
+        <button data-dir="left">←</button>
+        <button data-dir="center">居中</button>
+        <button data-dir="right">→</button>
+        <i></i>
+        <button data-dir="down">↓</button>
+        <i></i>
     </div>
 
     <p class="sub-title">物件按钮</p>

@@ -40,6 +40,11 @@ class DSR {
         this.baseDistance = null;
         this.cache = [];
         this.loading = false;
+        this.vRatio = 1;
+        this._distance = {
+            x: 0,
+            y: 0
+        };
 
         this.width = opt.width;
         this.height = opt.height;
@@ -52,6 +57,17 @@ class DSR {
 
         // 初始化
         this.init();
+    }
+
+    set vDistance(obj) {
+        this._distance = {
+            x: obj.x,
+            y: obj.y
+        };
+    }
+
+    get vDistance() {
+        return this._distance;
     }
 
     // 初始化
@@ -81,6 +97,7 @@ class DSR {
         this._Container = new __Container();
         this._Container.pivot.set(self.width / 2, self.height / 2);
         this._Container.position.set(self.width / 2, self.height / 2);
+        // this._Container.scale.set(2, 2);
         this._App.stage.addChild(self._Container);
 
         // 提示信息
@@ -285,12 +302,10 @@ class DSR {
 
     // 舞台事件
     tinkEvent() {
-        let self = this,
-            dragCtr = self.dragCtr,
-            delCtr = self.delCtr,
-            flipCtr = self.flipCtr;
+        let self = this;
 
         self._Pointer = this._Tink.makePointer();
+        this._Tink.vScale = 1;
 
         // press事件
         self._Pointer.press = () => {
@@ -333,7 +348,6 @@ class DSR {
                     if (self._Pointer.hitTestSprite(self.spriteList[i])) {
                         let _cur = self.spriteList[i];
                         _cur.draggable = true;
-                        // console.log(_cur._texture.textureCacheIds);
                         self.isHitSprite = true;
                         self.spriteList.splice(i, 1);
                         self.spriteList.push(_cur);
@@ -360,6 +374,7 @@ class DSR {
             this.isHitDel = false;
             this.isHitFlip = false;
         }
+
     }
 
     // 外部按钮事件
@@ -421,10 +436,57 @@ class DSR {
         self.updateCtr(_sprite);
     }
 
+    set vRatio(value) {
+        this._vRatio = value;
+    }
+
+    get vRatio() {
+        return this._vRatio;
+    }
+
+    // 整体缩放
     range(ratio) {
         let self = this
 
         self._Container.scale.set(ratio, ratio);
+        self.vRatio = ratio;
+        this._Tink.vScale = ratio;
+        this.showCtr(false);
+    }
+
+    // 整体移动
+    move(direction, distance) {
+        let self = this,
+            _dis = self.vDistance;
+
+        switch (direction) {
+            case 'up':
+                self._Container.y -= distance;
+                _dis.y -= distance;
+                break;
+            case 'down':
+                self._Container.y += distance;
+                _dis.y += distance;
+                break;
+            case 'left':
+                self._Container.x -= distance;
+                _dis.x -= distance;
+                break;
+            case 'right':
+                self._Container.x += distance;
+                _dis.x += distance;
+                break;
+            case 'center':
+                self._Container.position.set(self.width / 2, self.height / 2)
+                _dis = {
+                    x: 0,
+                    y: 0
+                };
+                break;
+        }
+        this.showCtr(false);
+        self.vDistance = _dis;
+        self._Tink.vDistance = _dis;
     }
 
     // 展示控件
@@ -441,17 +503,22 @@ class DSR {
 
     // 更新控件坐标
     updateCtr(sprite) {
-        let s_width = sprite.width,
-            s_height = sprite.height,
-            s_x = sprite.x, // 精灵中心坐标
-            s_y = sprite.y // 精灵中心坐标
+        let _ratio = this.vRatio,
+            s_width = sprite.width * _ratio,
+            s_height = sprite.height * _ratio,
+            s_x = sprite.x * _ratio, // 精灵中心坐标
+            s_y = sprite.y * _ratio, // 精灵中心坐标
+            v_diff = {
+                width: this.width * (_ratio - 1) / 2,
+                height: this.height * (_ratio - 1) / 2,
+            };
 
-        this.dragCtr.x = s_x + s_width / 2 + this.dragCtr.width / 2;
-        this.dragCtr.y = s_y - s_height / 2 - this.dragCtr.height / 2;
-        this.delCtr.x = s_x - s_width / 2 - this.delCtr.width / 2;
-        this.delCtr.y = s_y + s_height / 2 + this.delCtr.height / 2;
-        this.flipCtr.x = s_x - s_width / 2 - this.flipCtr.width / 2;
-        this.flipCtr.y = s_y - s_height / 2 - this.flipCtr.height / 2;
+        this.dragCtr.x = s_x + s_width / 2 + this.dragCtr.width / 2 - v_diff.width;
+        this.dragCtr.y = s_y - s_height / 2 - this.dragCtr.height / 2 - v_diff.height;
+        this.delCtr.x = s_x - s_width / 2 - this.delCtr.width / 2 - v_diff.width;
+        this.delCtr.y = s_y + s_height / 2 + this.delCtr.height / 2 - v_diff.height;
+        this.flipCtr.x = s_x - s_width / 2 - this.flipCtr.width / 2 - v_diff.width;
+        this.flipCtr.y = s_y - s_height / 2 - this.flipCtr.height / 2 - v_diff.height;
     }
 
     // 更新物件按钮显示

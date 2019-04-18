@@ -112,7 +112,77 @@ nie.define('Index', () => {
             _dsr.range(ratio);
             $(".rangeNum").text('缩放比例：[' + ratio + ']；进度：[' + _val + ']');
         });
+
+        // 移动控制
+        $('.directioncbox button').on('click', function () {
+            let _direction = $(this).data('dir')
+
+            console.log(_direction)
+            _dsr.move(_direction, 10);
+        })
+
+        let keyUp = keyboard(38)
+        let keyRight = keyboard(39)
+        let keyDown = keyboard(40)
+        let keyLeft = keyboard(37)
+        let keySpace = keyboard(32)
+
+        keyUp.press = () => {
+            _dsr.move('up', 10);
+        }
+        keyRight.press = () => {
+            _dsr.move('right', 10);
+        }
+        keyDown.press = () => {
+            _dsr.move('down', 10);
+        }
+        keyLeft.press = () => {
+            _dsr.move('left', 10);
+        }
+        keySpace.press = () => {
+            _dsr.move('center', 10);
+        }
     };
+
+    function keyboard(keyCode) {
+        let key = {};
+        key.code = keyCode;
+        key.isDown = false;
+        key.isUp = true;
+        key.press = undefined;
+        key.release = undefined;
+
+        //The `downHandler`
+        key.downHandler = event => {
+            if (event.keyCode === key.code) {
+                if (key.isUp && key.press) key.press();
+                key.isDown = true;
+                key.isUp = false;
+            }
+            event.preventDefault();
+        };
+
+        //The `upHandler`
+        key.upHandler = event => {
+            if (event.keyCode === key.code) {
+                if (key.isDown && key.release) key.release();
+                key.isDown = false;
+                key.isUp = true;
+            }
+            event.preventDefault();
+        };
+
+        //Attach event listeners
+        window.addEventListener(
+            "keydown", key.downHandler.bind(key), false
+        );
+        window.addEventListener(
+            "keyup", key.upHandler.bind(key), false
+        );
+
+        //Return the key object
+        return key;
+    }
 
     pageEvent();
 })

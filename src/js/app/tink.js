@@ -4,6 +4,11 @@ class Tink {
         //Add element and scale properties
         this.element = element;
         this._scale = scale;
+        this._vScale = 1;
+        this._vDistance = {
+            x: 0,
+            y: 0
+        };
 
         //An array to store all the draggable sprites
         this.draggableSprites = [];
@@ -36,6 +41,26 @@ class Tink {
 
         //Update scale values for all pointers
         this.pointers.forEach(pointer => pointer.scale = value);
+    }
+
+    get vScale() {
+        return this._vScale;
+    }
+
+    set vScale(value) {
+        this._vScale = value;
+
+        this.pointers.forEach(pointer => pointer.vScale = value);
+    }
+
+    get vDistance() {
+        return this._vDistance;
+    }
+
+    set vDistance(obj) {
+        this._vDistance = obj;
+
+        this.pointers.forEach(pointer => pointer.vDistance = obj);
     }
 
     //`makeDraggable` lets you make a drag-and-drop sprite by pushing it
@@ -112,6 +137,10 @@ class Tink {
         let pointer = {
             element: element,
             _scale: scale,
+            _vDistance: {
+                x: 0,
+                y: 0
+            },
 
             //Private x and y properties
             _x: 0,
@@ -156,6 +185,27 @@ class Tink {
             },
             set scale(value) {
                 this._scale = value;
+            },
+
+            get vScale() {
+                return this._vScale;
+            },
+            set vScale(value) {
+                this._vScale = value;
+            },
+
+            get vDistance() {
+                return this._vDistance;
+            },
+            set vDistance(obj) {
+                this._vDistance = obj;
+            },
+
+            get diff() {
+                return {
+                    width: (this.element.width * (this._vScale - 1)) / 2,
+                    height: (this.element.height * (this._vScale - 1)) / 2,
+                }
             },
 
             //Add a `cursor` getter/setter to change the pointer's cursor
@@ -204,7 +254,7 @@ class Tink {
                 this._visible = value;
             },
 
-            //The pointer's mouse `moveHandler`
+            //The pointer's mouse `moveHandler`【Don】
             moveHandler(event) {
                 //Get the element that's firing the event
                 let element = event.target;
@@ -214,11 +264,13 @@ class Tink {
                 this._x = (event.pageX - element.offsetLeft);
                 this._y = (event.pageY - element.offsetTop);
 
+                // console.log('[' + this._x + ',' + this._y + ']')
+
                 //Prevent the event's default behavior 
                 event.preventDefault();
             },
 
-            //The pointer's `touchmoveHandler`
+            //The pointer's `touchmoveHandler`【Don】
             touchmoveHandler(event) {
                 let element = event.target;
 
@@ -243,7 +295,7 @@ class Tink {
                 event.preventDefault();
             },
 
-            //The pointer's `touchstartHandler`
+            //The pointer's `touchstartHandler`【Don】
             touchstartHandler(event) {
                 let element = event.target;
 
@@ -310,9 +362,8 @@ class Tink {
                 //event.preventDefault();
             },
 
-            //`hitTestSprite` figures out if the pointer is touching a sprite
+            //`hitTestSprite` figures out if the pointer is touching a sprite【Don】
             hitTestSprite(sprite) {
-
                 //Add global `gx` and `gy` properties to the sprite if they
                 //don't already exist
                 addGlobalPositionProperties(sprite);
@@ -324,8 +375,8 @@ class Tink {
                 //Find out the sprite's offset from its anchor point
                 let xAnchorOffset, yAnchorOffset;
                 if (sprite.anchor !== undefined) {
-                    xAnchorOffset = sprite.width * sprite.anchor.x;
-                    yAnchorOffset = sprite.height * sprite.anchor.y;
+                    xAnchorOffset = sprite.width * sprite.anchor.x * this.vScale;
+                    yAnchorOffset = sprite.height * sprite.anchor.y * this.vScale;
                 } else {
                     xAnchorOffset = 0;
                     yAnchorOffset = 0;
@@ -337,9 +388,9 @@ class Tink {
                     //Get the position of the sprite's edges using global
                     //coordinates
                     let left = sprite.gx - xAnchorOffset,
-                        right = sprite.gx + sprite.width * 2 - xAnchorOffset,
+                        right = sprite.gx + sprite.width * this.vScale - xAnchorOffset,
                         top = sprite.gy - yAnchorOffset,
-                        bottom = sprite.gy + sprite.height * 2 - yAnchorOffset;
+                        bottom = sprite.gy + sprite.height * this.vScale - yAnchorOffset;
 
                     //Find out if the pointer is intersecting the rectangle.
                     //`hit` will become `true` if the pointer is inside the
@@ -406,9 +457,10 @@ class Tink {
     //Many of Tink's objects, like pointers, use collision
     //detection using the sprites' global x and y positions. To make
     //this easier, new `gx` and `gy` properties are added to sprites
-    //that reference Pixi sprites' `getGlobalPosition()` values.
+    //that reference Pixi sprites' `getGlobalPosition()` values.【Don】
     addGlobalPositionProperties(sprite) {
         if (sprite.gx === undefined) {
+            // console.log(sprite.getGlobalPosition().x)
             Object.defineProperty(
                 sprite,
                 "gx", {
@@ -420,6 +472,7 @@ class Tink {
         }
 
         if (sprite.gy === undefined) {
+            // console.log(sprite.getGlobalPosition().y)
             Object.defineProperty(
                 sprite,
                 "gy", {
@@ -432,7 +485,7 @@ class Tink {
     }
 
     //A method that implments drag-and-drop functionality 
-    //for each pointer
+    //for each pointer【Don】
     updateDragAndDrop(draggableSprites) {
         //Create a pointer if one doesn't already exist
         if (this.pointers.length === 0) {
@@ -463,8 +516,8 @@ class Tink {
 
                             //Calculate the difference between the pointer's
                             //position and the sprite's position
-                            pointer.dragOffsetX = pointer.x - sprite.gx * 2;
-                            pointer.dragOffsetY = pointer.y - sprite.gy * 2;
+                            pointer.dragOffsetX = pointer.x - sprite.gx;
+                            pointer.dragOffsetY = pointer.y - sprite.gy;
 
                             //Set the sprite as the pointer's `dragSprite` property
                             pointer.dragSprite = sprite;
@@ -493,8 +546,9 @@ class Tink {
                 //If the pointer is down and it has a `dragSprite`, make the sprite follow the pointer's
                 //position, with the calculated offset
                 else {
-                    pointer.dragSprite.x = (pointer.x - pointer.dragOffsetX) / 2;
-                    pointer.dragSprite.y = (pointer.y - pointer.dragOffsetY) / 2;
+                    console.log(pointer.vDistance)
+                    pointer.dragSprite.x = (pointer.x - pointer.dragOffsetX + pointer.diff.width - pointer.vDistance.x) / pointer.vScale;
+                    pointer.dragSprite.y = (pointer.y - pointer.dragOffsetY + pointer.diff.height - pointer.vDistance.y) / pointer.vScale;
                 }
             }
 
