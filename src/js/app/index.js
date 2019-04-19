@@ -114,11 +114,12 @@ nie.define('Index', () => {
         });
 
         // 移动控制
+        let moveDistance = 30;
         $('.directioncbox button').on('click', function () {
             let _direction = $(this).data('dir')
 
             console.log(_direction)
-            _dsr.move(_direction, 10);
+            _dsr.move(_direction, moveDistance);
         })
 
         let keyUp = keyboard(38)
@@ -128,22 +129,23 @@ nie.define('Index', () => {
         let keySpace = keyboard(32)
 
         keyUp.press = () => {
-            _dsr.move('up', 10);
+            _dsr.move('up', moveDistance);
         }
         keyRight.press = () => {
-            _dsr.move('right', 10);
+            _dsr.move('right', moveDistance);
         }
         keyDown.press = () => {
-            _dsr.move('down', 10);
+            _dsr.move('down', moveDistance);
         }
         keyLeft.press = () => {
-            _dsr.move('left', 10);
+            _dsr.move('left', moveDistance);
         }
         keySpace.press = () => {
-            _dsr.move('center', 10);
+            _dsr.move('center', moveDistance);
         }
     };
 
+    // 键盘事件
     function keyboard(keyCode) {
         let key = {};
         key.code = keyCode;

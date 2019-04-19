@@ -164,6 +164,15 @@ class DSR {
                 curSprite.scale.set(_scale, _scale);
                 self.updateCtr(curSprite);
             }
+
+            // 房间缓动
+            self._Container.x = self._Container.x + (self._cx + self.vDistance.x - self._Container.x) / 10;
+            self._Container.y = self._Container.y + (self._cy + self.vDistance.y - self._Container.y) / 10;
+
+            // 缩放缓动
+            let curScale = self._Container.scale.x,
+                diffRatio = curScale + (self.vRatio - curScale) / 10
+            self._Container.scale.set(diffRatio, diffRatio);
         }
     }
 
@@ -448,7 +457,7 @@ class DSR {
     range(ratio) {
         let self = this
 
-        self._Container.scale.set(ratio, ratio);
+        // self._Container.scale.set(ratio, ratio);
         self.vRatio = ratio;
         this._Tink.vScale = ratio;
         this.showCtr(false);
@@ -461,23 +470,23 @@ class DSR {
 
         switch (direction) {
             case 'up':
-                self._Container.y -= distance;
+                // self._Container.y -= distance;
                 _dis.y -= distance;
                 break;
             case 'down':
-                self._Container.y += distance;
+                // self._Container.y += distance;
                 _dis.y += distance;
                 break;
             case 'left':
-                self._Container.x -= distance;
+                // self._Container.x -= distance;
                 _dis.x -= distance;
                 break;
             case 'right':
-                self._Container.x += distance;
+                // self._Container.x += distance;
                 _dis.x += distance;
                 break;
             case 'center':
-                self._Container.position.set(self.width / 2, self.height / 2)
+                // self._Container.position.set(self.width / 2, self.height / 2)
                 _dis = {
                     x: 0,
                     y: 0
@@ -485,6 +494,7 @@ class DSR {
                 break;
         }
         this.showCtr(false);
+        // this.updateCtr();
         self.vDistance = _dis;
         self._Tink.vDistance = _dis;
     }
@@ -508,17 +518,18 @@ class DSR {
             s_height = sprite.height * _ratio,
             s_x = sprite.x * _ratio, // 精灵中心坐标
             s_y = sprite.y * _ratio, // 精灵中心坐标
-            v_diff = {
-                width: this.width * (_ratio - 1) / 2,
-                height: this.height * (_ratio - 1) / 2,
+            v_diff = { // 缩放后的原点坐标偏移 + container的偏移量
+                x: (this.width * (_ratio - 1) / 2) - this.vDistance.x,
+                y: (this.height * (_ratio - 1) / 2) - this.vDistance.y,
             };
 
-        this.dragCtr.x = s_x + s_width / 2 + this.dragCtr.width / 2 - v_diff.width;
-        this.dragCtr.y = s_y - s_height / 2 - this.dragCtr.height / 2 - v_diff.height;
-        this.delCtr.x = s_x - s_width / 2 - this.delCtr.width / 2 - v_diff.width;
-        this.delCtr.y = s_y + s_height / 2 + this.delCtr.height / 2 - v_diff.height;
-        this.flipCtr.x = s_x - s_width / 2 - this.flipCtr.width / 2 - v_diff.width;
-        this.flipCtr.y = s_y - s_height / 2 - this.flipCtr.height / 2 - v_diff.height;
+        // 控件坐标 = 当前精灵中心坐标 +(-) 精灵宽高 * 缩放倍数 +(-) 控件自身坐标偏移 - 缩放后的原点坐标偏移 + container的偏移量
+        this.dragCtr.x = s_x + s_width / 2 + this.dragCtr.width / 2 - v_diff.x;
+        this.dragCtr.y = s_y - s_height / 2 - this.dragCtr.height / 2 - v_diff.y;
+        this.delCtr.x = s_x - s_width / 2 - this.delCtr.width / 2 - v_diff.x;
+        this.delCtr.y = s_y + s_height / 2 + this.delCtr.height / 2 - v_diff.y;
+        this.flipCtr.x = s_x - s_width / 2 - this.flipCtr.width / 2 - v_diff.x;
+        this.flipCtr.y = s_y - s_height / 2 - this.flipCtr.height / 2 - v_diff.y;
     }
 
     // 更新物件按钮显示
