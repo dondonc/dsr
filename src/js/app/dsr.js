@@ -305,6 +305,13 @@ class DSR {
         this.isHitFlip = false;
         this.baseDistance = null;
 
+        // 重置缩放比例，偏移量
+        this.vRatio = 1;
+        this.vDistance = {
+            x: 0,
+            y: 0
+        };
+
         // 重置按钮样式
         $(this.setting.btns).removeClass('disabled');
     }

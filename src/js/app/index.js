@@ -87,6 +87,8 @@ nie.define('Index', () => {
             $(this).addClass('act').siblings().removeClass('act');
             //切换主题
             _dsr.change(dsrFun.resources[_i]);
+            // 重置进度条
+            $range.val(0).trigger('porpertychange');
             undateBtns(_i);
         })
 
