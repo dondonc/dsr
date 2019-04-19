@@ -318,7 +318,8 @@ class DSR {
 
     // 舞台事件
     tinkEvent() {
-        let self = this;
+        let self = this,
+            _setting = self.setting;
 
         self._Pointer = this._Tink.makePointer();
         this._Tink.vScale = 1;

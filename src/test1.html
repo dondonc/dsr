@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>test1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+        }
+
+        a {
+            display: block;
+            width: 90%;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border: 1px solid #000;
+            background: red;
+            color: #fff;
+            margin: 0 auto 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>test page 1</h1>
+    <a href="test2.html">link to page 2</a>
+    <a href="javascript:void(0)" class="btn_replace">replace link to page 2</a>
+    <script src="js/lib/jquery.js"></script>
+
+    <script>
+        $(() => {
+            let $replaceBtn = $(".btn_replace")
+
+            $replaceBtn.on('click', function () {
+                window.location.replace(__uri('test2.html'))
+            })
+        })
+    </script>
+</body>
+
+</html>

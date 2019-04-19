@@ -125,27 +125,27 @@ nie.define('Index', () => {
             _dsr.move(_direction, moveDistance);
         })
 
-        let keyUp = keyboard(38)
-        let keyRight = keyboard(39)
-        let keyDown = keyboard(40)
-        let keyLeft = keyboard(37)
-        let keySpace = keyboard(32)
+        // let keyUp = keyboard(38)
+        // let keyRight = keyboard(39)
+        // let keyDown = keyboard(40)
+        // let keyLeft = keyboard(37)
+        // let keySpace = keyboard(32)
 
-        keyUp.press = () => {
-            _dsr.move('up', moveDistance);
-        }
-        keyRight.press = () => {
-            _dsr.move('right', moveDistance);
-        }
-        keyDown.press = () => {
-            _dsr.move('down', moveDistance);
-        }
-        keyLeft.press = () => {
-            _dsr.move('left', moveDistance);
-        }
-        keySpace.press = () => {
-            _dsr.move('center', moveDistance);
-        }
+        // keyUp.press = () => {
+        //     _dsr.move('up', moveDistance);
+        // }
+        // keyRight.press = () => {
+        //     _dsr.move('right', moveDistance);
+        // }
+        // keyDown.press = () => {
+        //     _dsr.move('down', moveDistance);
+        // }
+        // keyLeft.press = () => {
+        //     _dsr.move('left', moveDistance);
+        // }
+        // keySpace.press = () => {
+        //     _dsr.move('center', moveDistance);
+        // }
     };
 
     // 键盘事件
