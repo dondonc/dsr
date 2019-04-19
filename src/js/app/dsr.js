@@ -349,7 +349,9 @@ class DSR {
                 self._Container.removeChild(self.curSprite);
                 self._Tink.makeUndraggable(self.curSprite);
                 self.showCtr(false);
-                self.updateBtn();
+                if (_setting.limitOnce && _setting.limitOnce) {
+                    self.updateBtn();
+                }
             } else if (self._Pointer.hitTestSprite(self.flipCtr) && self.flipCtr.visible == true) {
                 // 点击了【翻转】控件
                 self.isHitFlip = true;
@@ -405,8 +407,10 @@ class DSR {
                 _name = $this.data('name')
 
             // 限制只能添加一次
-            if ($this.hasClass('disabled')) return;
-            $this.addClass('disabled');
+            if (_setting.limitOnce && _setting.limitOnce) {
+                if ($this.hasClass('disabled')) return;
+                $this.addClass('disabled');
+            }
 
             // 创建和添加物件精灵
             self.add(_name);
