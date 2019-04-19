@@ -2,31 +2,31 @@
 
 "icon-del.png":
 {
-	"frame": {"x":0,"y":0,"w":35,"h":33},
+	"frame": {"x":0,"y":0,"w":45,"h":45},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":33},
-	"sourceSize": {"w":35,"h":33}
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":45},
+	"sourceSize": {"w":45,"h":45}
 },
 "icon-drag.png":
 {
-	"frame": {"x":40,"y":0,"w":35,"h":34},
+	"frame": {"x":50,"y":0,"w":45,"h":45},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":34},
-	"sourceSize": {"w":35,"h":34}
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":45},
+	"sourceSize": {"w":45,"h":45}
 },
 "icon-flip.png":
 {
-	"frame": {"x":80,"y":0,"w":35,"h":33},
+	"frame": {"x":100,"y":0,"w":45,"h":45},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":33},
-	"sourceSize": {"w":35,"h":33}
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":45},
+	"sourceSize": {"w":45,"h":45}
 },
 "loading.png":
 {
-	"frame": {"x":120,"y":0,"w":267,"h":29},
+	"frame": {"x":150,"y":0,"w":267,"h":29},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":267,"h":29},
@@ -37,8 +37,8 @@
 	"version": "1.0",
 	"image": "basic.png",
 	"format": "RGBA8888",
-	"size": {"w":387,"h":34},
+	"size": {"w":417,"h":45},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:4f2f856fa4f2d556748df6248b879792:fbc58331d89b40c66faf009a41af8366:532e39fc0dbecca3521067064434d3e9$"
+	"smartupdate": "$TexturePacker:SmartUpdate:6dea81294796a0f1ec43a087516fb51b:78ecf52c47caf94abff4fe1eec304f87:532e39fc0dbecca3521067064434d3e9$"
 }
 }
